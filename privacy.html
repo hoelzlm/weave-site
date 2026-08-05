@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — Weave</title>
+  <meta name="description" content="Weave's privacy policy: all workout data processing happens on-device, nothing is collected, stored, or transmitted to Rinnebühl Labs or any third party.">
+  <link rel="icon" href="assets/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="assets/favicon.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <nav class="nav">
+    <a class="nav-brand" href="index.html">
+      <img src="assets/logo.png" alt="Weave logo">
+      Weave
+    </a>
+    <div class="nav-links">
+      <a href="index.html#features">Features</a>
+      <a href="index.html#pro">Pro</a>
+      <a href="privacy.html">Privacy</a>
+    </div>
+  </nav>
+
+  <main class="doc">
+    <h1>Privacy Policy</h1>
+    <p class="updated">Last updated: August 5, 2026</p>
+
+    <div class="callout">
+      <p>Short version: Weave has no backend, no account system, and no third-party analytics or advertising SDKs. Your workout data is read from Apple Health, processed entirely on your iPhone, and never transmitted anywhere by Weave.</p>
+    </div>
+
+    <h2>Who this policy covers</h2>
+    <p>This policy applies to the Weave iOS app ("Weave"), published by Rinnebühl Labs. It describes what data Weave accesses on your device and, more importantly, what it does not do with it.</p>
+
+    <h2>Data Weave reads from Apple Health</h2>
+    <p>With your permission, Weave reads the following workout data from HealthKit to build your share cards:</p>
+    <ul>
+      <li>Workout type (e.g. run, ride, walk)</li>
+      <li>Distance, duration, and pace</li>
+      <li>Active energy burned (calories)</li>
+      <li>Heart rate</li>
+      <li>Flights climbed</li>
+      <li>Route / GPS path recorded by your Apple Watch or iPhone (<code>HKWorkoutRoute</code>)</li>
+    </ul>
+    <p>This access is read-only. Weave never writes to, modifies, or deletes anything in Apple Health. Permission is requested in stages: workout-list access when you first open the app, and route or heart-rate detail only when you open an individual workout.</p>
+
+    <h2>Where this data goes</h2>
+    <p>Nowhere but your device. Weave has no server, no cloud sync, and no database of any kind. All card rendering, route drawing, and workout merging happens locally on your iPhone using Apple's own frameworks (HealthKit, MapKit, Core Graphics). Rinnebühl Labs does not receive, see, or store any of your health or workout data at any point.</p>
+
+    <h2>Photo library access</h2>
+    <p>When you export a card or sticker, Weave saves the resulting image to your photo library. This only happens when you explicitly tap export or save — Weave does not read your existing photos.</p>
+
+    <h2>Analytics, advertising, and third parties</h2>
+    <p>Weave does not integrate any analytics, crash reporting, advertising, or other third-party SDKs. There are no trackers of any kind in the app. No data about you or your usage is shared with, or sold to, anyone — because none is collected in the first place.</p>
+
+    <h2>Account &amp; sign-in</h2>
+    <p>Weave has no account system, no sign-up, no login, and no Sign in with Apple. There is nothing to link your identity to.</p>
+
+    <h2>In-app purchases</h2>
+    <p>Weave Pro is a one-time in-app purchase processed entirely by Apple through StoreKit. Rinnebühl Labs never sees your payment details — Apple handles billing and shares only the entitlement status (whether you own Weave Pro) with the app.</p>
+
+    <h2>Location services</h2>
+    <p>Weave does not request or use live device location (there is no location permission prompt). Route maps are built from the GPS path already recorded with your workout in Apple Health, not from tracking your current location.</p>
+
+    <h2>Children's privacy</h2>
+    <p>Weave is not directed at children and does not knowingly collect any data from anyone, regardless of age — since no data is collected at all.</p>
+
+    <h2>Changes to this policy</h2>
+    <p>If Weave's data practices ever change, this page will be updated and the "last updated" date above will reflect the change. Continued use of the app after an update constitutes acceptance of the revised policy.</p>
+
+    <h2>Contact</h2>
+    <p>Questions about this policy or Weave's data practices can be sent to <a href="mailto:info@rinnebuehl.de">info@rinnebuehl.de</a>.</p>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span>© 2026 Rinnebühl Labs. Weave for iOS.</span>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="mailto:info@rinnebuehl.de">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
