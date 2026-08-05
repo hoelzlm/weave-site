@@ -156,6 +156,7 @@ img { max-width: 100%; display: block; }
 /* Screenshot strip */
 .shots {
   display: flex;
+  justify-content: center;
   gap: 20px;
   overflow-x: auto;
   padding: 40px 24px 8px;
