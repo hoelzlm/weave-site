@@ -87,6 +87,55 @@ img { max-width: 100%; display: block; }
   letter-spacing: -0.02em;
 }
 
+.workout-word {
+  display: inline-block;
+  position: relative;
+  width: 5ch;
+  height: 1.08em;
+  line-height: 1.08;
+  text-align: left;
+  vertical-align: baseline;
+}
+
+.word-viewport {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1.35em;
+  line-height: 1.08;
+  overflow: hidden;
+}
+
+.word-track {
+  display: flex;
+  flex-direction: column;
+  transform: translateY(0.14em);
+  transition: transform 0.55s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.word-track span {
+  display: block;
+  height: 1.35em;
+  line-height: 1.08;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .word-track { transition: none; }
+}
+
 .hero .gradient-text {
   background: var(--gradient);
   -webkit-background-clip: text;
