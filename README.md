@@ -24,4 +24,7 @@ open index.html
 2. In the repo's Settings → Pages, set source to the default branch (root).
 3. Add a custom domain of `weave.rinnebuehl.de` in the same Pages settings (the `CNAME` file already contains this).
 4. At the domain registrar for `rinnebuehl.de`, add a `CNAME` DNS record: `weave` → `<github-username>.github.io`.
-5. Once the App Store listing is live, update the "Coming soon" App Store link in `index.html` with the real link.
+5. Create a Formspree form and verify its notification destination.
+6. Replace `REPLACE_WITH_FORM_ID` in the beta form action in `index.html` with the Formspree form ID.
+7. Deploy over HTTPS and submit a test address from the production site. Confirm the notification arrives and the privacy-page wording matches the Formspree account configuration.
+8. Once the App Store listing is live, update the beta CTA and form copy in `index.html` with the real App Store link and release details.

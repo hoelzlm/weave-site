@@ -180,6 +180,66 @@ img { max-width: 100%; display: block; }
   .shots img { height: 380px; }
 }
 
+/* Beta signup */
+.beta-section {
+  background: var(--bg-elevated);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.beta-inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.beta-inner .section-head { margin-bottom: 30px; }
+
+.beta-form {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  flex-wrap: wrap;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.form-field {
+  flex: 1 1 260px;
+}
+
+.form-field label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 7px;
+}
+
+.form-field input {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-card);
+  color: var(--text);
+  font: inherit;
+}
+
+.form-field input:focus {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+.beta-form .btn { flex: 0 0 auto; }
+
+.form-note {
+  flex-basis: 100%;
+  color: var(--text-faint);
+  font-size: 0.82rem;
+  margin: 2px 0 0;
+}
+
+.form-note a { color: var(--text-dim); }
+
 /* Sections */
 section { padding: 72px 24px; }
 
@@ -334,6 +394,10 @@ footer {
 }
 .footer-links a { text-decoration: none; color: var(--text-dim); }
 .footer-links a:hover { color: var(--text); }
+
+@media (max-width: 640px) {
+  .beta-form .btn { width: 100%; justify-content: center; }
+}
 
 /* Privacy page */
 .doc {
