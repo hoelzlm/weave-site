@@ -411,8 +411,9 @@ section { padding: 72px 24px; }
   flex: 0 0 auto;
 }
 .price-tag .amount {
-  font-size: 2.1rem;
+  font-size: 3rem;
   font-weight: 800;
+  line-height: 1;
 }
 .price-tag .note {
   font-size: 0.82rem;
