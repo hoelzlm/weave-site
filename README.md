@@ -26,6 +26,10 @@ Live at `weave.rinnebuehl.de` via GitHub Pages, custom domain + HTTPS working. B
 ## Outlook — what's next
 
 - **Swap the TestFlight CTA for the real App Store link** once the listing is live: replace the `#beta` hero button and retire the beta-signup section (or repurpose it as a "you're in" confirmation) in `index.html` and drop the matching paragraph in `privacy.html`.
-- **Add Open Graph / Twitter Card meta tags** (`og:image`, `og:title`, `twitter:card`, etc.) to `index.html` — currently missing, so links shared on social/Slack/iMessage render with no preview image. A cropped screenshot or the logo on the gradient works as the share image.
 - **Verify the Formspree flow end-to-end**: submit a real address on the production site and confirm the notification arrives at the configured destination before pointing any traffic at the beta.
-- **Add `robots.txt` / `sitemap.xml`** before the planned Product Hunt / HN / Reddit push (see `Weave 2/docs/marketing/`) so the site indexes cleanly.
+
+## SEO
+
+- `robots.txt` and `sitemap.xml` at the repo root — 2-page site, `Allow: /`, no `lastmod` (goes stale, not worth tracking).
+- Open Graph / Twitter Card meta tags on both pages, reusing each page's existing `<title>`/`<meta description>`. Share image is `assets/og-image.png` (1200×630, logo centered on the site's gradient) — regenerate by rendering `og-render.html`-style markup through headless Chrome if the logo or gradient ever changes.
+- Canonical URL tag on both pages.
