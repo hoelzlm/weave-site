@@ -4,9 +4,10 @@ Marketing site + privacy policy for the Weave iOS app. Plain HTML/CSS, no build 
 
 ## Structure
 
-- `index.html` — landing page
-- `privacy.html` — privacy policy (linked from the App Store listing)
+- `index.html` — landing page (animated headline, screenshot strip, TestFlight beta signup, features, Pro)
+- `privacy.html` — privacy policy (linked from the App Store listing and the beta form)
 - `styles.css` — shared styles
+- `script.js` — headline word-cycle animation
 - `assets/` — logo, favicon, screenshots (copied from `Weave 2/docs/marketing/`)
 - `CNAME` — custom domain for GitHub Pages (`weave.rinnebuehl.de`)
 
@@ -18,13 +19,13 @@ Just open the files directly, no server needed:
 open index.html
 ```
 
-## Deploy (GitHub Pages)
+## Status
 
-1. Create a GitHub repo and push this directory to it.
-2. In the repo's Settings → Pages, set source to the default branch (root).
-3. Add a custom domain of `weave.rinnebuehl.de` in the same Pages settings (the `CNAME` file already contains this).
-4. At the domain registrar for `rinnebuehl.de`, add a `CNAME` DNS record: `weave` → `<github-username>.github.io`.
-5. Create a Formspree form and verify its notification destination.
-6. Replace `REPLACE_WITH_FORM_ID` in the beta form action in `index.html` with the Formspree form ID.
-7. Deploy over HTTPS and submit a test address from the production site. Confirm the notification arrives and the privacy-page wording matches the Formspree account configuration.
-8. Once the App Store listing is live, update the beta CTA and form copy in `index.html` with the real App Store link and release details.
+Live at `weave.rinnebuehl.de` via GitHub Pages, custom domain + HTTPS working. Beta signup form posts to Formspree (`mppazblp`).
+
+## Outlook — what's next
+
+- **Swap the TestFlight CTA for the real App Store link** once the listing is live: replace the `#beta` hero button and retire the beta-signup section (or repurpose it as a "you're in" confirmation) in `index.html` and drop the matching paragraph in `privacy.html`.
+- **Add Open Graph / Twitter Card meta tags** (`og:image`, `og:title`, `twitter:card`, etc.) to `index.html` — currently missing, so links shared on social/Slack/iMessage render with no preview image. A cropped screenshot or the logo on the gradient works as the share image.
+- **Verify the Formspree flow end-to-end**: submit a real address on the production site and confirm the notification arrives at the configured destination before pointing any traffic at the beta.
+- **Add `robots.txt` / `sitemap.xml`** before the planned Product Hunt / HN / Reddit push (see `Weave 2/docs/marketing/`) so the site indexes cleanly.
