@@ -21,6 +21,18 @@ Just open the files directly, no server needed:
 open index.html
 ```
 
+## Checks
+
+Run before committing, from the repo root (Node 18+, no dependencies):
+
+```bash
+node scripts/check-site.mjs
+```
+
+It exits non-zero and prints `FAIL <page> [<check>] <reason>` for each problem. It checks that every local `href`/`src` (including `#anchor` targets) resolves; every page has an English/German twin with a matching canonical, reciprocal `hreflang` alternates and a language switch that leads to the twin; `sitemap.xml` and the pages agree; both index pages have the same ids, `<section>`s and `.card` blocks; and the root redirect script, run as-is against stubbed browsers, sends only German-first browsers to `de/` and respects `?lang=en` and a stored choice.
+
+Until the German screenshots land (ticket 02), it fails on the four missing `assets/screenshots/de/screen-*.png` files referenced by `de/index.html`. That is expected; any other failure is a real bug.
+
 ## Status
 
 Live at `weave.rinnebuehl.de` via GitHub Pages, custom domain + HTTPS working. Beta signup form posts to Formspree (`mppazblp`).

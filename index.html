@@ -6,12 +6,12 @@
   <script>
     (function () {
       var target = 'de/' + location.hash;
-      try {
-        if (new URLSearchParams(location.search).get('lang') === 'en') {
-          localStorage.setItem('weave-lang', 'en');
-          return;
-        }
-      } catch (e) {}
+      var choseEnglish = false;
+      try { choseEnglish = new URLSearchParams(location.search).get('lang') === 'en'; } catch (e) {}
+      if (choseEnglish) {
+        try { localStorage.setItem('weave-lang', 'en'); } catch (e) {}
+        return;
+      }
       var saved = null;
       try { saved = localStorage.getItem('weave-lang'); } catch (e) {}
       if (saved) {
