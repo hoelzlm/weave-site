@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join, normalize } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 
 const BASE_URL = 'https://weave.rinnebuehl.de';
-const ROOT = process.cwd();
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 const failures = [];
 
@@ -51,10 +52,25 @@ function urlOf(page) {
   return `${BASE_URL}/${path}`;
 }
 
+function isSiteUrl(url) {
+  return url.startsWith(BASE_URL) && /^([/?#]|$)/.test(url.slice(BASE_URL.length));
+}
+
 function fileOfUrl(url) {
-  if (!url.startsWith(`${BASE_URL}/`)) return null;
-  const path = url.slice(BASE_URL.length + 1).replace(/[?#].*$/, '');
+  if (!isSiteUrl(url)) return null;
+  const path = url.slice(BASE_URL.length).replace(/^\//, '').replace(/[?#].*$/, '');
   return path === '' || path.endsWith('/') ? `${path}index.html` : path;
+}
+
+function fragmentOf(reference) {
+  const index = reference.indexOf('#');
+  return index === -1 ? '' : reference.slice(index + 1);
+}
+
+function queryOf(reference) {
+  const [beforeFragment] = reference.split('#');
+  const index = beforeFragment.indexOf('?');
+  return new URLSearchParams(index === -1 ? '' : beforeFragment.slice(index + 1));
 }
 
 function stripScriptsAndComments(html) {
@@ -97,26 +113,48 @@ function isExternal(reference) {
 }
 
 function resolveReference(page, reference) {
-  const [pathAndQuery, fragment = ''] = reference.split('#');
-  const path = pathAndQuery.split('?')[0];
+  const fragment = fragmentOf(reference);
+  const path = reference.split('#')[0].split('?')[0];
   if (path === '') return { file: page, fragment };
   const joined = path.startsWith('/') ? path.slice(1) : join(dirname(page), path);
   const file = normalize(joined).replace(/\\/g, '/');
   const target = file === '.' || path.endsWith('/') ? join(file, 'index.html') : file;
-  return { file: target.replace(/\\/g, '/'), fragment: decodeURIComponent(fragment) };
+  return { file: target.replace(/\\/g, '/'), fragment };
+}
+
+function targetOf(page, reference) {
+  if (isSiteUrl(reference)) return { file: fileOfUrl(reference), fragment: fragmentOf(reference) };
+  if (isExternal(reference)) return null;
+  return resolveReference(page, reference);
+}
+
+function decodeFragment(fragment) {
+  try {
+    return decodeURIComponent(fragment);
+  } catch {
+    return null;
+  }
 }
 
 function referencesOf(loaded) {
-  const references = loaded.tags.flatMap((tag) =>
-    ['href', 'src'].filter((name) => tag.attributes[name] !== undefined).map((name) => tag.attributes[name].trim()),
-  );
+  const references = loaded.tags.flatMap((tag) => [
+    ...['href', 'src'].filter((name) => tag.attributes[name] !== undefined).map((name) => tag.attributes[name].trim()),
+    ...(tag.name === 'meta' && isSiteUrl(tag.attributes.content?.trim() ?? '') ? [tag.attributes.content.trim()] : []),
+  ]);
   return [...new Set(references)];
 }
 
 function checkLinks(loaded, pagesByFile) {
   for (const reference of referencesOf(loaded)) {
-    if (reference === '' || isExternal(reference)) continue;
-    const { file, fragment } = resolveReference(loaded.page, reference);
+    if (reference === '') continue;
+    const target = targetOf(loaded.page, reference);
+    if (!target) continue;
+    const { file } = target;
+    const fragment = decodeFragment(target.fragment);
+    if (fragment === null) {
+      fail(loaded.page, 'links', `${reference} has a malformed fragment`);
+      continue;
+    }
     if (file.startsWith('..')) {
       fail(loaded.page, 'links', `${reference} points outside the site`);
       continue;
@@ -126,8 +164,8 @@ function checkLinks(loaded, pagesByFile) {
       continue;
     }
     if (fragment === '' || !file.endsWith('.html')) continue;
-    const target = pagesByFile.get(file) ?? loadPage(file);
-    if (!target.ids.has(fragment)) fail(loaded.page, 'links', `${reference} has no element with id "${fragment}" in ${file}`);
+    const linked = pagesByFile.get(file) ?? loadPage(file);
+    if (!linked.ids.has(fragment)) fail(loaded.page, 'links', `${reference} has no element with id "${fragment}" in ${file}`);
   }
 }
 
@@ -145,6 +183,14 @@ function checkCanonical(loaded) {
   const expected = urlOf(loaded.page);
   if (canonicals.length !== 1) fail(loaded.page, 'canonical', `expected one canonical link, found ${canonicals.length}`);
   else if (canonicals[0] !== expected) fail(loaded.page, 'canonical', `canonical is ${canonicals[0]}, expected ${expected}`);
+}
+
+function checkOpenGraphUrl(loaded) {
+  const urls = loaded.tags.filter((tag) => tag.name === 'meta' && tag.attributes.property === 'og:url').map((tag) => tag.attributes.content);
+  const expected = urlOf(loaded.page);
+  for (const url of urls) {
+    if (url !== expected) fail(loaded.page, 'canonical', `og:url is ${url}, expected ${expected}`);
+  }
 }
 
 function checkAlternates(loaded) {
@@ -180,6 +226,9 @@ function checkLanguageSwitch(loaded) {
     if (lang !== languageOf(twin)) fail(loaded.page, 'language switch', `data-set-lang="${lang}", expected "${languageOf(twin)}"`);
     const target = resolveReference(loaded.page, href).file;
     if (target !== twin) fail(loaded.page, 'language switch', `${href} leads to ${target}, expected ${twin}`);
+    if (twin === 'index.html' && queryOf(href).get('lang') !== 'en') {
+      fail(loaded.page, 'language switch', `${href} leads to the redirecting root without ?lang=en`);
+    }
   }
 }
 
@@ -191,6 +240,7 @@ function checkTwin(loaded) {
   }
   checkDocumentLanguage(loaded);
   checkCanonical(loaded);
+  checkOpenGraphUrl(loaded);
   checkAlternates(loaded);
   checkLanguageSwitch(loaded);
 }
@@ -204,9 +254,13 @@ function checkSitemap(pages) {
   for (const page of pages) {
     if (!locations.includes(urlOf(page))) fail(page, 'sitemap', `${urlOf(page)} is not listed in sitemap.xml`);
   }
+  const seen = new Set();
   for (const url of locations) {
+    if (seen.has(url)) fail('sitemap.xml', 'sitemap', `${url} is listed more than once`);
+    seen.add(url);
     const file = fileOfUrl(url);
     if (!file || !isFile(file)) fail('sitemap.xml', 'sitemap', `${url} has no matching file`);
+    else if (file.endsWith('.html') && urlOf(file) !== url) fail('sitemap.xml', 'sitemap', `${url} is not the canonical URL ${urlOf(file)}`);
   }
 }
 
@@ -237,30 +291,31 @@ function inlineScripts(html) {
     .map(([, , body]) => body);
 }
 
-function createStorage({ saved, throws }) {
-  const entries = new Map(saved ? [['weave-lang', saved]] : []);
-  const guard = () => {
-    if (throws) throw new Error('SecurityError: storage is blocked');
-  };
+const BLOCK_STORAGE = `Object.defineProperty(globalThis, 'localStorage', {
+  get() { throw new Error('SecurityError: storage is blocked'); },
+});`;
+
+function createStorage(entries) {
   return {
-    entries,
-    getItem: (key) => (guard(), entries.has(key) ? entries.get(key) : null),
-    setItem: (key, value) => (guard(), entries.set(key, String(value))),
-    removeItem: (key) => (guard(), entries.delete(key)),
+    getItem: (key) => (entries.has(key) ? entries.get(key) : null),
+    setItem: (key, value) => entries.set(key, String(value)),
+    removeItem: (key) => entries.delete(key),
   };
 }
 
 function runRedirect(script, { languages, language, search = '', hash = '', saved, throws = false }) {
   const redirects = [];
-  const storage = createStorage({ saved, throws });
+  const entries = new Map(saved ? [['weave-lang', saved]] : []);
   const context = {
     location: { search, hash, replace: (url) => redirects.push(url), assign: (url) => redirects.push(url) },
     navigator: { languages, language },
-    localStorage: storage,
     URLSearchParams,
   };
-  vm.runInNewContext(script, context, { timeout: 1000 });
-  return { redirects, stored: storage.entries.get('weave-lang') };
+  if (!throws) context.localStorage = createStorage(entries);
+  vm.createContext(context);
+  if (throws) vm.runInContext(BLOCK_STORAGE, context);
+  vm.runInContext(script, context, { timeout: 1000 });
+  return { redirects, stored: entries.get('weave-lang') };
 }
 
 const REDIRECT_CASES = [

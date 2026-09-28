@@ -29,7 +29,7 @@ Run before committing, from the repo root (Node 18+, no dependencies):
 node scripts/check-site.mjs
 ```
 
-It exits non-zero and prints `FAIL <page> [<check>] <reason>` for each problem. It checks that every local `href`/`src` (including `#anchor` targets) resolves; every page has an English/German twin with a matching canonical, reciprocal `hreflang` alternates and a language switch that leads to the twin; `sitemap.xml` and the pages agree; both index pages have the same ids, `<section>`s and `.card` blocks; and the root redirect script, run as-is against stubbed browsers, sends only German-first browsers to `de/` and respects `?lang=en` and a stored choice.
+It exits non-zero and prints `FAIL <page> [<check>] <reason>` for each problem. It checks that every local or same-domain `href`/`src`/`<meta content>` URL (including `#anchor` targets) resolves; every page has an English/German twin with a matching canonical and `og:url`, reciprocal `hreflang` alternates and a language switch that leads to the twin (with `?lang=en` when it leads to the redirecting root); `sitemap.xml` and the pages agree; both index pages have the same ids, `<section>`s and `.card` blocks; and the root redirect script, run as-is against stubbed browsers, sends only German-first browsers to `de/` and respects `?lang=en` and a stored choice.
 
 Until the German screenshots land (ticket 02), it fails on the four missing `assets/screenshots/de/screen-*.png` files referenced by `de/index.html`. That is expected; any other failure is a real bug.
 
