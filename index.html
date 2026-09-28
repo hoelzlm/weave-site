@@ -3,9 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    (function () {
+      var target = 'de/' + location.hash;
+      try {
+        if (new URLSearchParams(location.search).get('lang') === 'en') {
+          localStorage.setItem('weave-lang', 'en');
+          return;
+        }
+      } catch (e) {}
+      var saved = null;
+      try { saved = localStorage.getItem('weave-lang'); } catch (e) {}
+      if (saved) {
+        if (saved === 'de') location.replace(target);
+        return;
+      }
+      var preferred = (navigator.languages && navigator.languages[0]) || navigator.language || '';
+      if (/^de(-|$)/i.test(preferred)) location.replace(target);
+    })();
+  </script>
   <title>Weave: Workout Stories</title>
   <meta name="description" content="Weave turns your Apple Watch workout data into designed, Instagram-ready share cards. Merge multiple workouts into one recap. No Strava account needed.">
   <link rel="canonical" href="https://weave.rinnebuehl.de/">
+  <link rel="alternate" hreflang="en" href="https://weave.rinnebuehl.de/">
+  <link rel="alternate" hreflang="de" href="https://weave.rinnebuehl.de/de/">
+  <link rel="alternate" hreflang="x-default" href="https://weave.rinnebuehl.de/">
   <link rel="icon" href="assets/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="assets/favicon.png">
   <link rel="stylesheet" href="styles.css">
@@ -13,6 +35,8 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://weave.rinnebuehl.de/">
   <meta property="og:site_name" content="Weave">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="de_DE">
   <meta property="og:title" content="Weave: Workout Stories">
   <meta property="og:description" content="Weave turns your Apple Watch workout data into designed, Instagram-ready share cards. Merge multiple workouts into one recap. No Strava account needed.">
   <meta property="og:image" content="https://weave.rinnebuehl.de/assets/og-image.png">
@@ -32,6 +56,7 @@
       <a href="#features">Features</a>
       <a href="#pro">Pro</a>
       <a href="privacy.html">Privacy</a>
+      <a class="lang-switch" href="de/" hreflang="de" lang="de" data-set-lang="de">Deutsch</a>
     </div>
   </nav>
 
