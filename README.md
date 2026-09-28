@@ -6,8 +6,10 @@ Marketing site + privacy policy for the Weave iOS app. Plain HTML/CSS, no build 
 
 - `index.html` — landing page (animated headline, screenshot strip, TestFlight beta signup, features, Pro)
 - `privacy.html` — privacy policy (linked from the App Store listing and the beta form)
+- `support.html` — support page (linked from the App Store listing)
+- `de/` — German copies of the three pages; the root redirects German browsers here (see `docs/adr/0001-german-under-de-path-with-root-redirect.md`). A copy change goes in both languages by hand.
 - `styles.css` — shared styles
-- `script.js` — headline word-cycle animation
+- `script.js` — headline word-cycle animation and the language-switch choice
 - `assets/` — logo, favicon, screenshots (copied from `Weave 2/docs/marketing/`)
 - `CNAME` — custom domain for GitHub Pages (`weave.rinnebuehl.de`)
 
