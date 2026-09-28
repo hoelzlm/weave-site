@@ -512,7 +512,16 @@ footer {
 }
 
 @media (max-width: 480px) {
-  html[lang="de"] .nav { padding: 16px; }
-  html[lang="de"] .nav-links { gap: 14px; font-size: 14px; }
-  html[lang="de"] .nav-links a[href$="#features"] { display: none; }
+  .nav { padding: 16px; }
+  .nav-links { gap: 14px; font-size: 14px; }
+  .nav-links a[href$="#features"] { display: none; }
+  .pro-list { grid-template-columns: 1fr; }
 }
+
+/* Long German words would otherwise re-wrap the headline every cycle on narrow phones */
+@media (max-width: 400px) {
+  .workout-word[data-fit] { display: block; margin: 0 auto; }
+}
+
+.doc h1 { hyphens: auto; overflow-wrap: break-word; }
+.price-tag .amount { font-size: clamp(2rem, 9vw, 3rem); }
