@@ -6,8 +6,10 @@ Marketing site + privacy policy for the Weave iOS app. Plain HTML/CSS, no build 
 
 - `index.html` — landing page (animated headline, screenshot strip, TestFlight beta signup, features, Pro)
 - `privacy.html` — privacy policy (linked from the App Store listing and the beta form)
+- `support.html` — support page (linked from the App Store listing)
+- `de/` — German copies of the three pages; the root redirects German browsers here (see `docs/adr/0001-german-under-de-path-with-root-redirect.md`). A copy change goes in both languages by hand.
 - `styles.css` — shared styles
-- `script.js` — headline word-cycle animation
+- `script.js` — headline word-cycle animation and the language-switch choice
 - `assets/` — logo, favicon, screenshots (copied from `Weave 2/docs/marketing/`)
 - `CNAME` — custom domain for GitHub Pages (`weave.rinnebuehl.de`)
 
@@ -18,6 +20,18 @@ Just open the files directly, no server needed:
 ```bash
 open index.html
 ```
+
+## Checks
+
+Run before committing, from the repo root (Node 18+, no dependencies):
+
+```bash
+node scripts/check-site.mjs
+```
+
+It exits non-zero and prints `FAIL <page> [<check>] <reason>` for each problem. It checks that every local or same-domain `href`/`src`/`<meta content>` URL (including `#anchor` targets) resolves; every page has an English/German twin with a matching canonical and `og:url`, reciprocal `hreflang` alternates and a language switch that leads to the twin (with `?lang=en` when it leads to the redirecting root); `sitemap.xml` and the pages agree; both index pages have the same ids, `<section>`s and `.card` blocks; and the root redirect script, run as-is against stubbed browsers, sends only German-first browsers to `de/` and respects `?lang=en` and a stored choice.
+
+Until the German screenshots land (ticket 02), it fails on the four missing `assets/screenshots/de/screen-*.png` files referenced by `de/index.html`. That is expected; any other failure is a real bug.
 
 ## Status
 

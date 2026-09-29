@@ -3,9 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Weave: Workout Stories</title>
+  <script>
+    (function () {
+      var target = 'de/' + location.hash;
+      var choseEnglish = false;
+      try { choseEnglish = new URLSearchParams(location.search).get('lang') === 'en'; } catch (e) {}
+      if (choseEnglish) {
+        try { localStorage.setItem('weave-lang', 'en'); } catch (e) {}
+        return;
+      }
+      var saved = null;
+      try { saved = localStorage.getItem('weave-lang'); } catch (e) {}
+      if (saved) {
+        if (saved === 'de') location.replace(target);
+        return;
+      }
+      var preferred = (navigator.languages && navigator.languages[0]) || navigator.language || '';
+      if (/^de(-|$)/i.test(preferred)) location.replace(target);
+    })();
+  </script>
+  <title>Weave – Workout Cards for Your Instagram Stories</title>
   <meta name="description" content="Weave turns your Apple Watch workout data into designed, Instagram-ready share cards. Merge multiple workouts into one recap. No Strava account needed.">
   <link rel="canonical" href="https://weave.rinnebuehl.de/">
+  <link rel="alternate" hreflang="en" href="https://weave.rinnebuehl.de/">
+  <link rel="alternate" hreflang="de" href="https://weave.rinnebuehl.de/de/">
+  <link rel="alternate" hreflang="x-default" href="https://weave.rinnebuehl.de/">
   <link rel="icon" href="assets/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="assets/favicon.png">
   <link rel="stylesheet" href="styles.css">
@@ -13,11 +35,13 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://weave.rinnebuehl.de/">
   <meta property="og:site_name" content="Weave">
-  <meta property="og:title" content="Weave: Workout Stories">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="de_DE">
+  <meta property="og:title" content="Weave – Workout Cards for Your Instagram Stories">
   <meta property="og:description" content="Weave turns your Apple Watch workout data into designed, Instagram-ready share cards. Merge multiple workouts into one recap. No Strava account needed.">
   <meta property="og:image" content="https://weave.rinnebuehl.de/assets/og-image.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Weave: Workout Stories">
+  <meta name="twitter:title" content="Weave – Workout Cards for Your Instagram Stories">
   <meta name="twitter:description" content="Weave turns your Apple Watch workout data into designed, Instagram-ready share cards. Merge multiple workouts into one recap. No Strava account needed.">
   <meta name="twitter:image" content="https://weave.rinnebuehl.de/assets/og-image.png">
 </head>
@@ -32,6 +56,7 @@
       <a href="#features">Features</a>
       <a href="#pro">Pro</a>
       <a href="privacy.html">Privacy</a>
+      <a class="lang-switch" href="de/" hreflang="de" lang="de" data-set-lang="de">Deutsch</a>
     </div>
   </nav>
 
@@ -40,7 +65,7 @@
     <h1>Merge <span class="workout-word"><span class="word-viewport" aria-hidden="true"><span class="word-track"><span>runs.</span><span>cycles.</span><span>hikes.</span><span>walks.</span><span>runs.</span></span></span><span class="sr-only">runs.</span></span> Share<br><span class="gradient-text">route cards</span> worth posting.</h1>
     <p class="lede">Weave turns your Apple Watch workout data into designed, Social-Media-ready cards — route map, pace, distance, splits. No screenshots. No Strava account.</p>
     <div class="cta-row">
-      <a class="btn btn-primary" href="#beta">Join the TestFlight beta</a>
+      <a class="btn btn-primary" href="#beta">Join the beta</a>
       <a class="btn btn-secondary" href="#features">See features</a>
     </div>
   </header>
@@ -48,7 +73,7 @@
   <div class="shots">
     <img src="assets/screenshots/screen-2.png" alt="Weave workout list with Merge tab">
     <img src="assets/screenshots/screen-1.png" alt="Weave merge picker with three ride workouts selected">
-    <img src="assets/screenshots/screen-3.png" alt="Weave card editor showing four card styles and a route map">
+    <img src="assets/screenshots/screen-3.png" alt="Weave card editor showing four templates and a route map">
     <img src="assets/screenshots/screen-4.png" alt="Weave transparent sticker export of a route">
   </div>
 
@@ -81,7 +106,7 @@
         <div class="card-copy">
           <div class="icon">⌘</div>
           <h3>Merge multiple workouts into one card</h3>
-          <p>Pick any 2+ workouts — a training block, a race weekend, a week of rides — and combine them into a single recap card with combined stats and a merged route. No other workout app lets you build a custom multi-workout recap on demand.</p>
+          <p>Pick 2+ workouts of the same activity — a training block, a race weekend, a week of rides — and combine them into a single recap card with combined stats and a merged route. Your own recap card from several workouts – in one tap.</p>
         </div>
         <img src="assets/screenshots/screen-1.png" alt="Selecting three ride workouts to merge">
       </div>
@@ -134,6 +159,7 @@
       <span>© 2026 Rinnebühl Labs. Weave for iOS.</span>
       <div class="footer-links">
         <a href="privacy.html">Privacy Policy</a>
+        <a href="support.html">Support</a>
         <a href="mailto:info@rinnebuehl.de">Contact</a>
       </div>
     </div>
