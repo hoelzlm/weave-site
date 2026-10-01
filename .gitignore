@@ -1,1 +1,4 @@
 .DS_Store
+
+# Generator output kept locally for reference (sample data, not published)
+docs/examples/
