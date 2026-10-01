@@ -122,12 +122,12 @@ done
 | 2026-10-01 (local, lighter images) | `/de/` | 100 | 95 | 100 | 100 | 1.9 s | 0 | 173 KiB |
 | 2026-10-01 (local, LCP fix) | `/` | 100 | 100 | 100 | 100 | 1.0 s | 0 | 139 KiB |
 | 2026-10-01 (local, LCP fix) | `/de/` | 100 | 100 | 100 | 100 | 1.0 s | 0 | 141 KiB |
-| 2026-10-01 (local, tester, live pending) | `/?lang=en` | 100 | 100 | 100 | — | 1.3 s | 0 | 147 KiB |
-| 2026-10-01 (local, tester, live pending) | `/de/` | 100 | 100 | 100 | — | 1.2 s | 0 | 151 KiB |
-| 2026-10-01 (local, tester, live pending) | `/share-workout-instagram.html` | — | — | — | — | 1.4 s | — | 76 KiB |
-| 2026-10-01 (local, tester, live pending) | `/de/merge-workouts.html` | — | — | — | — | 1.3 s | — | 90 KiB |
+| 2026-10-01 (local, tester, live pending) | `/?lang=en` | 100 | 100 | — | 100 | 1.3 s | 0 | 147 KiB |
+| 2026-10-01 (local, tester, live pending) | `/de/` | 100 | 100 | — | 100 | 1.2 s | 0 | 151 KiB |
+| 2026-10-01 (local, tester, live pending) | `/share-workout-instagram.html` | 100 | 100 | — | 100 | 1.4 s | 0 | 76 KiB |
+| 2026-10-01 (local, tester, live pending) | `/de/merge-workouts.html` | 100 | 100 | — | 100 | 1.3 s | 0 | 90 KiB |
 
-Baseline measured on `weave.rinnebuehl.de`, before the domain move. The tester's rows report three scores (all 100) and leave the fourth ("—") and the guide pages' scores unrecorded; repeat them on the live site once HTTPS is up. "Local" rows were measured against `python3 -m http.server` in the repo root, because the live site had no HTTPS certificate yet; they share the live runs' simulated throttling but not the live server's latency, so compare local with local:
+Baseline measured on `weave.rinnebuehl.de`, before the domain move. The tester's rows did not record Best practices ("—"); repeat all rows on the live site once HTTPS is up. "Local" rows were measured against `python3 -m http.server` in the repo root, because the live site had no HTTPS certificate yet; they share the live runs' simulated throttling but not the live server's latency, so compare local with local:
 
 ```bash
 python3 -m http.server 8741 --bind 127.0.0.1 &
