@@ -4,7 +4,7 @@ import { dirname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 
-const BASE_URL = 'https://weave.rinnebuehl.de';
+const BASE_URL = 'https://workoutstories.app';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 const failures = [];

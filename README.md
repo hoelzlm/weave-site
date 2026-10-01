@@ -11,7 +11,7 @@ Marketing site + privacy policy for the Weave iOS app. Plain HTML/CSS, no build 
 - `styles.css` — shared styles
 - `script.js` — headline word-cycle animation and the language-switch choice
 - `assets/` — logo, favicon, screenshots (copied from `Weave 2/docs/marketing/`)
-- `CNAME` — custom domain for GitHub Pages (`weave.rinnebuehl.de`)
+- `CNAME` — custom domain for GitHub Pages (`workoutstories.app`)
 
 ## Local preview
 
@@ -35,7 +35,7 @@ Until the German screenshots land (ticket 02), it fails on the four missing `ass
 
 ## Status
 
-Live at `weave.rinnebuehl.de` via GitHub Pages, custom domain + HTTPS working. Beta signup form posts to Formspree (`mppazblp`).
+Live at `workoutstories.app` via GitHub Pages (moved from `weave.rinnebuehl.de` on 2026-09-30, which redirects here). Beta signup form posts to Formspree (`mppazblp`).
 
 ## Outlook — what's next
 
@@ -47,3 +47,22 @@ Live at `weave.rinnebuehl.de` via GitHub Pages, custom domain + HTTPS working. B
 - `robots.txt` and `sitemap.xml` at the repo root — 2-page site, `Allow: /`, no `lastmod` (goes stale, not worth tracking).
 - Open Graph / Twitter Card meta tags on both pages, reusing each page's existing `<title>`/`<meta description>`. Share image is `assets/og-image.png` (1200×630, logo centered on the site's gradient) — regenerate by rendering `og-render.html`-style markup through headless Chrome if the logo or gradient ever changes.
 - Canonical URL tag on both pages.
+
+### Measuring
+
+Lighthouse (mobile) on both live home pages, before and after SEO work. Needs Node and Chrome; not part of `check-site.mjs`, because it depends on the network.
+
+```bash
+for page in "" de/; do
+  npx -y lighthouse@12 "https://workoutstories.app/$page" --quiet --form-factor=mobile \
+    --only-categories=performance,accessibility,best-practices,seo \
+    --chrome-flags="--headless=new" --output=json --output-path="lh-${page:-en}.json"
+done
+```
+
+| Date | Page | Perf | A11y | Best pr. | SEO | LCP | CLS | Weight |
+|---|---|---|---|---|---|---|---|---|
+| 2026-09-30 (baseline) | `/` | 72 | 95 | 100 | 100 | 10.0 s | 0.02 | 1,858 KiB |
+| 2026-09-30 (baseline) | `/de/` | 99 | 95 | 100 | 100 | 0.9 s | 0.083 | 2,816 KiB |
+
+Baseline measured on `weave.rinnebuehl.de`, before the domain move. Targets: LCP under 2.5 s, CLS under 0.1, performance 90+, accessibility 100.
