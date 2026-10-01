@@ -395,6 +395,8 @@ function textOfElement(html) {
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#39;|&apos;/g, "'")
+    .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCodePoint(parseInt(code, 16)))
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -501,6 +503,77 @@ function checkStructuredData() {
   }
 }
 
+// FAQ: the visible FAQ (#faq, one .faq-item per question: an <h3> question, then <p> answers)
+// and the FAQPage node in the page's JSON-LD must say the same thing, in the same order,
+// and both home pages must ask the same number of questions.
+
+function visibleFaq(html) {
+  const markup = stripScriptsAndComments(html);
+  const section = markup.match(/<section\b[^>]*\bid="faq"[^>]*>([\s\S]*?)<\/section>/i);
+  if (!section) return null;
+  return section[1]
+    .split(/<div\b[^>]*\bclass="[^"]*\bfaq-item\b[^"]*"[^>]*>/i)
+    .slice(1)
+    .map((item) => ({
+      question: textOfElement(item.match(/<h3\b[^>]*>([\s\S]*?)<\/h3>/i)?.[1] ?? ''),
+      answer: [...item.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)].map(([, inner]) => textOfElement(inner)).join(' '),
+    }));
+}
+
+function markedUpFaq(page, html) {
+  const blocks = jsonLdBlocks(html);
+  if (blocks.length !== 1) return null;
+  let data;
+  try {
+    data = JSON.parse(blocks[0]);
+  } catch {
+    return null;
+  }
+  const faqs = jsonLdNodes(data).filter((node) => typesOf(node).includes('FAQPage'));
+  if (faqs.length === 0) return null;
+  if (faqs.length > 1) fail(page, 'faq', `expected one FAQPage node, found ${faqs.length}`);
+  return [faqs[0].mainEntity].flat().filter(Boolean).map((entry, index) => {
+    if (!typesOf(entry).includes('Question')) fail(page, 'faq', `FAQPage entry ${index + 1} is not a Question`);
+    if (!typesOf(entry.acceptedAnswer).includes('Answer')) fail(page, 'faq', `FAQPage entry ${index + 1} has no Answer`);
+    return {
+      question: textOfElement(String(entry.name ?? '')),
+      answer: textOfElement(String(entry.acceptedAnswer?.text ?? '')),
+    };
+  });
+}
+
+function checkFaq() {
+  const counts = new Map();
+  for (const page of HOME_PAGES) {
+    if (!isFile(page)) continue;
+    const html = read(page);
+    const visible = visibleFaq(html);
+    const marked = markedUpFaq(page, html);
+    if (!visible) {
+      fail(page, 'faq', 'no visible FAQ section with id="faq"');
+      continue;
+    }
+    if (!marked) {
+      fail(page, 'faq', 'the JSON-LD block has no FAQPage node for the visible FAQ');
+      continue;
+    }
+    counts.set(page, visible.length);
+    if (visible.length < 5 || visible.length > 7) fail(page, 'faq', `${visible.length} visible questions, expected 5 to 7`);
+    if (marked.length !== visible.length) fail(page, 'faq', `FAQPage has ${marked.length} questions, the visible FAQ has ${visible.length}`);
+    visible.forEach((item, index) => {
+      const entry = marked[index];
+      if (!item.question || !item.answer) fail(page, 'faq', `visible question ${index + 1} has no question or no answer text`);
+      if (!entry) return;
+      if (entry.question !== item.question) fail(page, 'faq', `question ${index + 1} is "${item.question}" on the page but "${entry.question}" in FAQPage`);
+      if (entry.answer !== item.answer) fail(page, 'faq', `answer ${index + 1} ("${item.question}") differs between the page and FAQPage`);
+    });
+  }
+  const [english, german] = HOME_PAGES.map((page) => counts.get(page));
+  if (english !== undefined && german !== undefined && english !== german) {
+    fail('de/index.html', 'faq', `${german} FAQ questions, index.html has ${english}`);
+  }
+}
+
 function report() {
   for (const { page, check, message } of failures) console.log(`FAIL ${page} [${check}] ${message}`);
   console.log(failures.length === 0 ? 'All site checks passed.' : `\n${failures.length} failure(s).`);
@@ -518,6 +591,7 @@ function main() {
   checkIndexStructure(pagesByFile);
   checkRedirect();
   checkStructuredData();
+  checkFaq();
   report();
 }
 
