@@ -7,12 +7,24 @@ Marketing site + privacy policy for the Weave iOS app. Plain HTML/CSS, no build 
 - `index.html` — landing page (animated headline, screenshot strip, TestFlight beta signup, features, Pro)
 - `privacy.html` — privacy policy (linked from the App Store listing and the beta form)
 - `support.html` — support page (linked from the App Store listing)
+- `share-workout-instagram.html` — guide: sharing an Apple Watch workout on Instagram (see [Guides](#guides))
 - `404.html` — "page not found" page in both languages; GitHub Pages serves it at any missing path, so its URLs are root-absolute
-- `de/` — German copies of the three pages; the root redirects German browsers here (see `docs/adr/0001-german-under-de-path-with-root-redirect.md`). A copy change goes in both languages by hand.
+- `de/` — German copies of every page except `404.html`; the root redirects German browsers here (see `docs/adr/0001-german-under-de-path-with-root-redirect.md`). A copy change goes in both languages by hand.
 - `styles.css` — shared styles
 - `script.js` — headline word-cycle animation (visual only; the heading text keeps the first word) and the language-switch choice
 - `assets/` — logo, favicon, screenshots (copied from `Weave 2/docs/marketing/`), resized for the web; the full-resolution originals live in `assets/source/` and no page references them (see [Images](#images))
 - `CNAME` — custom domain for GitHub Pages (`workoutstories.app`)
+
+## Guides
+
+Guide pages answer a task people search for (e.g. "share Apple Watch workout on Instagram") and rank for it. Each one is useful without Weave: Apple's and Instagram's built-in ways first, then Weave's way. To add the next one:
+
+1. **Pick a short, keyword-bearing slug** and use it for both languages (ADR 0001): `my-guide.html` at the root, `de/my-guide.html` for German.
+2. **Copy an existing guide pair** (`share-workout-instagram.html` and its twin) and change, in the `<head>` of both: `<title>` (60 characters at most, with the target phrase), meta description, canonical, the three `hreflang` alternates (`x-default` is the English URL), `og:url`, and the `og:`/`twitter:` title and description (identical to the page's own). Point the language switch at the twin.
+3. **Write the body** inside `<main class="doc guide">`: an `.eyebrow` ("Guide" / "Anleitung"), one `<h1>` with the target phrase, the updated date, a short intro, then one `<section>` per method with an `<h2>` and an ordered list of steps. Use the target phrase once more in a subheading. Quote app and system labels exactly as the UI shows them in that language — the app's in `Weave 2/Localizable.xcstrings`, Apple's and Instagram's from their German help pages. German copy is written for German readers (informal "du"), not translated sentence by sentence. State only what you have checked against Apple's or Instagram's help pages or the app's code, and link the help page you used.
+4. **Images**: at most one or two existing screenshots, marked up as in [Images](#images). Images in any `<section>` after the first need `loading="lazy" decoding="async"`; the check enforces it.
+5. **Link it**: add both URLs to `sitemap.xml`, a link from the relevant feature card on both home pages, and a footer link on both home pages and on every guide.
+6. Run `node scripts/check-site.mjs`; its twin, hreflang, sitemap, link and image checks pick up the new pages without any change to the script.
 
 ## Local preview
 

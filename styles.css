@@ -562,3 +562,43 @@ footer {
 @media (max-width: 400px) {
   .faq-item { padding: 18px; }
 }
+
+/* Guide pages: a .doc page split into <section>s, one per method, so images below the first one load lazily */
+.footer-links { flex-wrap: wrap; row-gap: 10px; }
+
+.doc.guide section { padding: 0; }
+
+.doc.guide .eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--blue);
+}
+
+.doc.guide h1 { margin-top: 8px; hyphens: manual; }
+
+.doc ol { padding-left: 22px; }
+.doc strong { color: var(--text); }
+.doc a { color: var(--text); }
+
+.guide-shot { display: block; margin: 28px 0; }
+
+.guide-shot img {
+  height: 480px;
+  width: auto;
+  margin: 0 auto;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+
+@media (max-width: 640px) {
+  .guide-shot img { height: 380px; }
+}
+
+.doc .guide-next {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
