@@ -2,7 +2,7 @@
 
 ### Issue tracker
 
-Issues tracked as local markdown files under `.scratch/<feature-slug>/`. See `docs/agents/issue-tracker.md`.
+Issues tracked in GitHub Issues on `hoelzlm/weave-site` (specs as parent issues, tickets as sub-issues). See `docs/agents/issue-tracker.md`.
 
 ### Domain docs
 
