@@ -126,8 +126,12 @@ done
 | 2026-10-01 (local, tester, live pending) | `/de/` | 100 | 100 | — | 100 | 1.2 s | 0 | 151 KiB |
 | 2026-10-01 (local, tester, live pending) | `/share-workout-instagram.html` | 100 | 100 | — | 100 | 1.4 s | 0 | 76 KiB |
 | 2026-10-01 (local, tester, live pending) | `/de/merge-workouts.html` | 100 | 100 | — | 100 | 1.3 s | 0 | 90 KiB |
+| 2026-10-01 (live, median of 3) | `/` | 100 | 100 | 100 | 100 | 1.3 s | 0 | 126 KiB |
+| 2026-10-01 (live, median of 3) | `/de/` | 100 | 100 | 100 | 100 | 1.1 s | 0 | 130 KiB |
+| 2026-10-01 (live, median of 3) | `/share-workout-instagram.html` | 100 | 100 | 100 | 100 | 1.1 s | 0 | 62 KiB |
+| 2026-10-01 (live, median of 3) | `/de/merge-workouts.html` | 100 | 100 | 100 | 100 | 1.1 s | 0 | 76 KiB |
 
-Baseline measured on `weave.rinnebuehl.de`, before the domain move. The tester's rows did not record Best practices ("—"); repeat all rows on the live site once HTTPS is up. "Local" rows were measured against `python3 -m http.server` in the repo root, because the live site had no HTTPS certificate yet; they share the live runs' simulated throttling but not the live server's latency, so compare local with local:
+Baseline measured on `weave.rinnebuehl.de`, before the domain move. The tester's rows did not record Best practices ("—"). "Live" rows were measured on `https://workoutstories.app` once HTTPS was up, three runs per page, median shown; every page meets every target. Their weight is lower than the local rows' because GitHub Pages compresses responses and `python3 -m http.server` does not. "Local" rows were measured against `python3 -m http.server` in the repo root, because the live site had no HTTPS certificate yet; they share the live runs' simulated throttling but not the live server's latency, so compare local with local:
 
 ```bash
 python3 -m http.server 8741 --bind 127.0.0.1 &
