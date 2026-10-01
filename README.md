@@ -8,6 +8,7 @@ Marketing site + privacy policy for the Weave iOS app. Plain HTML/CSS, no build 
 - `privacy.html` — privacy policy (linked from the App Store listing and the beta form)
 - `support.html` — support page (linked from the App Store listing)
 - `share-workout-instagram.html` — guide: sharing an Apple Watch workout on Instagram (see [Guides](#guides))
+- `merge-workouts.html` — guide: merging Apple Watch workouts (Apple's combine while recording versus Weave's Recap card)
 - `404.html` — "page not found" page in both languages; GitHub Pages serves it at any missing path, so its URLs are root-absolute
 - `de/` — German copies of every page except `404.html`; the root redirects German browsers here (see `docs/adr/0001-german-under-de-path-with-root-redirect.md`). A copy change goes in both languages by hand.
 - `styles.css` — shared styles
