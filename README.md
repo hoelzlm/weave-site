@@ -59,7 +59,7 @@ The PNG fallback is reduced to 256 colours because a full-colour 600 px PNG is 1
 </picture>
 ```
 
-Add `loading="lazy" decoding="async"` to the `<img>` when it sits below the first screen (after the page's first `<section>`). `node scripts/check-site.mjs` enforces the dimensions, budgets and lazy loading.
+Add `loading="lazy" decoding="async"` to the `<img>` when it sits below the first screen (after the page's first `<section>`). Screenshots on the first screen carry `fetchpriority="low"` instead: the home pages' largest paint is the headline text, and Lighthouse's simulated LCP counts every image fetched at medium or high priority before that paint against it (that is what made the English page's LCP 10 s). The logo, the only first-screen image that is part of the hero itself, keeps its normal priority and ships as a 4 KB WebP on the home pages (`assets/logo.webp`, `cwebp -q 85 -m 6 -resize 192 0 assets/source/logo.png -o assets/logo.webp`). `node scripts/check-site.mjs` enforces the dimensions, budgets and lazy loading.
 
 ## Status
 
@@ -96,6 +96,8 @@ done
 | 2026-10-01 (local, before ticket 04) | `/de/` | 75 | 95 | 100 | 100 | 15.2 s | 0.001 | 2,828 KiB |
 | 2026-10-01 (local, lighter images) | `/` | 100 | 95 | 100 | 100 | 1.9 s | 0 | 170 KiB |
 | 2026-10-01 (local, lighter images) | `/de/` | 100 | 95 | 100 | 100 | 1.9 s | 0 | 173 KiB |
+| 2026-10-01 (local, LCP fix) | `/` | 100 | 95 | 100 | 100 | 1.0 s | 0 | 139 KiB |
+| 2026-10-01 (local, LCP fix) | `/de/` | 100 | 95 | 100 | 100 | 1.0 s | 0 | 141 KiB |
 
 Baseline measured on `weave.rinnebuehl.de`, before the domain move. "Local" rows were measured against `python3 -m http.server` in the repo root, because the live site had no HTTPS certificate yet; they share the live runs' simulated throttling but not the live server's latency, so compare local with local:
 
