@@ -7,6 +7,7 @@ Marketing site + privacy policy for the Weave iOS app. Plain HTML/CSS, no build 
 - `index.html` — landing page (animated headline, screenshot strip, TestFlight beta signup, features, Pro)
 - `privacy.html` — privacy policy (linked from the App Store listing and the beta form)
 - `support.html` — support page (linked from the App Store listing)
+- `404.html` — "page not found" page in both languages; GitHub Pages serves it at any missing path, so its URLs are root-absolute
 - `de/` — German copies of the three pages; the root redirects German browsers here (see `docs/adr/0001-german-under-de-path-with-root-redirect.md`). A copy change goes in both languages by hand.
 - `styles.css` — shared styles
 - `script.js` — headline word-cycle animation and the language-switch choice
@@ -15,11 +16,14 @@ Marketing site + privacy policy for the Weave iOS app. Plain HTML/CSS, no build 
 
 ## Local preview
 
-Just open the files directly, no server needed:
+Serve the repo root over HTTP — internal links point at directories (`./`, `../`), which a `file://` preview cannot open:
 
 ```bash
-open index.html
+python3 -m http.server 8000
+open http://localhost:8000/
 ```
+
+The 404 page is not served for missing paths locally; open `/404.html` to see it.
 
 ## Checks
 
@@ -29,7 +33,7 @@ Run before committing, from the repo root (Node 18+, no dependencies):
 node scripts/check-site.mjs
 ```
 
-It exits non-zero and prints `FAIL <page> [<check>] <reason>` for each problem. It checks that every local or same-domain `href`/`src`/`<meta content>` URL (including `#anchor` targets) resolves; every page has an English/German twin with a matching canonical and `og:url`, reciprocal `hreflang` alternates and a language switch that leads to the twin (with `?lang=en` when it leads to the redirecting root); `sitemap.xml` and the pages agree; both index pages have the same ids, `<section>`s and `.card` blocks; and the root redirect script, run as-is against stubbed browsers, sends only German-first browsers to `de/` and respects `?lang=en` and a stored choice.
+It exits non-zero and prints `FAIL <page> [<check>] <reason>` for each problem. It checks that every local or same-domain `href`/`src`/`<meta content>` URL (including `#anchor` targets) resolves; every page has an English/German twin with a matching canonical and `og:url`, reciprocal `hreflang` alternates and a language switch that leads to the twin (with `?lang=en` when it leads to the redirecting root); `sitemap.xml` and the pages agree; both index pages have the same ids, `<section>`s and `.card` blocks; no internal link targets `index.html` (link to the directory instead); `404.html` is `noindex`, uses only root-absolute URLs and links to both home pages (it needs no twin or sitemap entry); and the root redirect script, run as-is against stubbed browsers, sends only German-first browsers to `de/` and respects `?lang=en` and a stored choice.
 
 Until the German screenshots land (ticket 02), it fails on the four missing `assets/screenshots/de/screen-*.png` files referenced by `de/index.html`. That is expected; any other failure is a real bug.
 

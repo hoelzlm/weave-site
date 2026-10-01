@@ -9,6 +9,10 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 const failures = [];
 
+// Pages GitHub Pages serves outside the bilingual page set: no twin, no sitemap entry.
+const NOT_FOUND_PAGE = '404.html';
+const UNPAIRED_PAGES = new Set([NOT_FOUND_PAGE]);
+
 function fail(page, check, message) {
   failures.push({ page, check, message });
 }
@@ -355,6 +359,38 @@ function checkRedirect() {
   for (const testCase of REDIRECT_CASES) checkRedirectCase(scripts[0], testCase);
 }
 
+function checkNoIndexHtmlLinks(loaded) {
+  for (const reference of referencesOf(loaded)) {
+    if (isExternal(reference) && !isSiteUrl(reference)) continue;
+    const path = reference.split('#')[0].split('?')[0];
+    if (/(^|\/)index\.html$/.test(path)) {
+      fail(loaded.page, 'index links', `${reference} targets index.html; link to the directory (e.g. ./ or ../) instead`);
+    }
+  }
+}
+
+function checkNotFoundPage(pagesByFile) {
+  const loaded = pagesByFile.get(NOT_FOUND_PAGE);
+  if (!loaded) {
+    fail(NOT_FOUND_PAGE, '404', `${NOT_FOUND_PAGE} does not exist`);
+    return;
+  }
+  const robots = loaded.tags.filter((tag) => tag.name === 'meta' && tag.attributes.name?.toLowerCase() === 'robots');
+  if (!robots.some((tag) => /\bnoindex\b/i.test(tag.attributes.content ?? ''))) {
+    fail(NOT_FOUND_PAGE, '404', 'missing <meta name="robots" content="noindex">');
+  }
+  // GitHub Pages serves 404.html at the missing path (e.g. /de/foo), so relative URLs would break.
+  for (const reference of referencesOf(loaded)) {
+    if (reference === '' || reference.startsWith('#') || isExternal(reference)) continue;
+    if (!reference.startsWith('/')) fail(NOT_FOUND_PAGE, '404', `${reference} is relative; use a root-absolute URL`);
+  }
+  const homes = new Set(loaded.tags.filter((tag) => tag.name === 'a' && tag.attributes.href !== undefined)
+    .map((tag) => targetOf(NOT_FOUND_PAGE, tag.attributes.href.trim())?.file));
+  for (const home of ['index.html', 'de/index.html']) {
+    if (!homes.has(home)) fail(NOT_FOUND_PAGE, '404', `no link to the ${home === 'index.html' ? 'English' : 'German'} home page`);
+  }
+}
+
 function report() {
   for (const { page, check, message } of failures) console.log(`FAIL ${page} [${check}] ${message}`);
   console.log(failures.length === 0 ? 'All site checks passed.' : `\n${failures.length} failure(s).`);
@@ -364,11 +400,14 @@ function report() {
 function main() {
   const pages = discoverPages();
   const pagesByFile = new Map(pages.map((page) => [page, loadPage(page)]));
+  const pairedPages = pages.filter((page) => !UNPAIRED_PAGES.has(page));
   for (const loaded of pagesByFile.values()) {
     checkLinks(loaded, pagesByFile);
-    checkTwin(loaded);
+    checkNoIndexHtmlLinks(loaded);
+    if (!UNPAIRED_PAGES.has(loaded.page)) checkTwin(loaded);
   }
-  checkSitemap(pages);
+  checkSitemap(pairedPages);
+  checkNotFoundPage(pagesByFile);
   checkIndexStructure(pagesByFile);
   checkRedirect();
   report();

@@ -5,7 +5,6 @@
   --border: #23262f;
   --text: #f2f3f5;
   --text-dim: #9a9ea8;
-  --text-faint: #62666f;
   --blue: #35c1f0;
   --green: #d7ff3d;
   --gradient: linear-gradient(120deg, var(--blue), var(--green));
@@ -282,12 +281,12 @@ img { max-width: 100%; display: block; }
 
 .form-note {
   flex-basis: 100%;
-  color: var(--text-faint);
+  color: var(--text-dim);
   font-size: 0.82rem;
   margin: 2px 0 0;
 }
 
-.form-note a { color: var(--text-dim); }
+.form-note a { color: var(--text); }
 
 /* Sections */
 section { padding: 72px 24px; }
@@ -417,7 +416,7 @@ section { padding: 72px 24px; }
 }
 .price-tag .note {
   font-size: 0.82rem;
-  color: var(--text-faint);
+  color: var(--text-dim);
 }
 
 /* Footer */
@@ -434,7 +433,7 @@ footer {
   align-items: center;
   flex-wrap: wrap;
   gap: 16px;
-  color: var(--text-faint);
+  color: var(--text-dim);
   font-size: 0.88rem;
 }
 
@@ -462,7 +461,7 @@ footer {
 }
 
 .doc .updated {
-  color: var(--text-faint);
+  color: var(--text-dim);
   font-size: 0.9rem;
   margin-bottom: 40px;
 }
