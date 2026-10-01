@@ -355,6 +355,149 @@ function checkRedirect() {
   for (const testCase of REDIRECT_CASES) checkRedirectCase(scripts[0], testCase);
 }
 
+// Images: what a visitor's browser downloads, and whether it can reserve the space before it arrives.
+
+const IMAGE_BUDGET_BYTES = 150 * 1024;
+const FIRST_LOAD_IMAGE_BUDGET_BYTES = 400 * 1024;
+const IMAGE_SOURCES_DIR = 'assets/source/';
+
+function pngSize(bytes) {
+  const signature = '89504e470d0a1a0a';
+  if (bytes.length < 24 || bytes.subarray(0, 8).toString('hex') !== signature) return null;
+  return { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) };
+}
+
+function webpSize(bytes) {
+  if (bytes.length < 30 || bytes.toString('latin1', 0, 4) !== 'RIFF' || bytes.toString('latin1', 8, 12) !== 'WEBP') return null;
+  const chunk = bytes.toString('latin1', 12, 16);
+  if (chunk === 'VP8 ') return { width: bytes.readUInt16LE(26) & 0x3fff, height: bytes.readUInt16LE(28) & 0x3fff };
+  if (chunk === 'VP8L') {
+    const bits = bytes.readUInt32LE(21);
+    return { width: (bits & 0x3fff) + 1, height: ((bits >> 14) & 0x3fff) + 1 };
+  }
+  if (chunk === 'VP8X') return { width: bytes.readUIntLE(24, 3) + 1, height: bytes.readUIntLE(27, 3) + 1 };
+  return null;
+}
+
+function intrinsicSize(file) {
+  const bytes = readFileSync(join(ROOT, file));
+  return pngSize(bytes) ?? webpSize(bytes);
+}
+
+function srcsetFiles(srcset) {
+  return (srcset ?? '')
+    .split(',')
+    .map((candidate) => candidate.trim().split(/\s+/)[0])
+    .filter(Boolean);
+}
+
+// Every <img> in document order, with the <source>s of its <picture> and whether it comes after the
+// page's first <section>: the hero (nav, header, screenshot strip) is the first screen, the rest is below it.
+function imagesOf(loaded) {
+  const markup = stripScriptsAndComments(loaded.html);
+  const images = [];
+  let sources = null;
+  let pastFirstSection = false;
+  for (const [, closing, name, source] of markup.matchAll(/<(\/?)(picture|source|img|section)\b((?:[^>"']|"[^"]*"|'[^']*')*)>/gi)) {
+    const tag = name.toLowerCase();
+    const attributes = parseAttributes(source);
+    if (tag === 'section' && !closing) pastFirstSection = true;
+    else if (tag === 'picture') sources = closing ? null : [];
+    else if (tag === 'source' && sources) sources.push(attributes);
+    else if (tag === 'img') images.push({ attributes, sources: sources ?? [], pastFirstSection });
+  }
+  return images;
+}
+
+function localFile(page, reference) {
+  const target = reference ? targetOf(page, reference) : null;
+  return target && isFile(target.file) ? target.file : null;
+}
+
+// The file a current browser fetches for an image: the first <source> of its <picture>, else the <img> itself.
+function fetchedFile(page, image) {
+  const [first] = image.sources;
+  const candidates = first ? srcsetFiles(first.srcset) : [image.attributes.src];
+  const files = candidates.map((reference) => localFile(page, reference)).filter(Boolean);
+  return files.sort((a, b) => statSync(join(ROOT, b)).size - statSync(join(ROOT, a)).size)[0] ?? null;
+}
+
+function checkImageDimensions(loaded) {
+  for (const image of imagesOf(loaded)) {
+    const { src = '', width, height } = image.attributes;
+    const declared = { width: Number(width), height: Number(height) };
+    if (!/^[1-9]\d*$/.test(width ?? '') || !/^[1-9]\d*$/.test(height ?? '')) {
+      fail(loaded.page, 'images', `${src} does not declare its width and height`);
+      continue;
+    }
+    const file = localFile(loaded.page, src);
+    const actual = file && intrinsicSize(file);
+    if (actual && (actual.width !== declared.width || actual.height !== declared.height)) {
+      fail(loaded.page, 'images', `${src} declares ${width}×${height}, the file is ${actual.width}×${actual.height}`);
+    }
+    for (const reference of image.sources.flatMap((source) => srcsetFiles(source.srcset))) {
+      const sourceFile = localFile(loaded.page, reference);
+      const size = sourceFile && intrinsicSize(sourceFile);
+      if (size && Math.abs(size.width / size.height - declared.width / declared.height) > 0.005) {
+        fail(loaded.page, 'images', `${reference} is ${size.width}×${size.height}, not the ${width}×${height} shape its <img> declares`);
+      }
+    }
+  }
+}
+
+function checkImageWeight(loaded) {
+  const images = imagesOf(loaded);
+  const icons = linkTagsWithRel(loaded, 'icon').map((tag) => localFile(loaded.page, tag.attributes.href));
+  const referenced = new Set([
+    ...images.flatMap((image) => [
+      image.attributes.src,
+      ...image.sources.flatMap((source) => srcsetFiles(source.srcset)),
+    ]).map((reference) => localFile(loaded.page, reference)),
+    ...icons,
+  ].filter(Boolean));
+  for (const file of referenced) {
+    const bytes = statSync(join(ROOT, file)).size;
+    if (bytes > IMAGE_BUDGET_BYTES) fail(loaded.page, 'image weight', `${file} is ${Math.round(bytes / 1024)} KB, over the ${IMAGE_BUDGET_BYTES / 1024} KB budget per image`);
+  }
+  const firstLoad = new Set([
+    ...images.filter((image) => image.attributes.loading !== 'lazy').map((image) => fetchedFile(loaded.page, image)),
+    ...icons,
+  ].filter(Boolean));
+  const total = [...firstLoad].reduce((sum, file) => sum + statSync(join(ROOT, file)).size, 0);
+  if (total > FIRST_LOAD_IMAGE_BUDGET_BYTES) {
+    fail(loaded.page, 'image weight', `first load fetches ${Math.round(total / 1024)} KB of images, over the ${FIRST_LOAD_IMAGE_BUDGET_BYTES / 1024} KB budget`);
+  }
+}
+
+function checkLazyLoading(loaded) {
+  for (const { attributes, pastFirstSection } of imagesOf(loaded)) {
+    const lazy = attributes.loading === 'lazy';
+    if (pastFirstSection && !lazy) fail(loaded.page, 'lazy loading', `${attributes.src} is below the first screen but not loading="lazy"`);
+    if (!pastFirstSection && lazy) fail(loaded.page, 'lazy loading', `${attributes.src} is on the first screen but loading="lazy"`);
+  }
+}
+
+function checkImageSourcesUnreferenced(loaded) {
+  for (const reference of referencesOf(loaded)) {
+    const file = localFile(loaded.page, reference);
+    if (file?.startsWith(IMAGE_SOURCES_DIR)) fail(loaded.page, 'images', `${reference} is a full-resolution original; reference the resized copy`);
+  }
+  for (const image of imagesOf(loaded)) {
+    for (const reference of image.sources.flatMap((source) => srcsetFiles(source.srcset))) {
+      const file = localFile(loaded.page, reference);
+      if (file?.startsWith(IMAGE_SOURCES_DIR)) fail(loaded.page, 'images', `${reference} is a full-resolution original; reference the resized copy`);
+      if (!file && !isExternal(reference)) fail(loaded.page, 'links', `srcset ${reference} does not exist`);
+    }
+  }
+}
+
+function checkImages(loaded) {
+  checkImageDimensions(loaded);
+  checkImageWeight(loaded);
+  checkLazyLoading(loaded);
+  checkImageSourcesUnreferenced(loaded);
+}
+
 function report() {
   for (const { page, check, message } of failures) console.log(`FAIL ${page} [${check}] ${message}`);
   console.log(failures.length === 0 ? 'All site checks passed.' : `\n${failures.length} failure(s).`);
@@ -367,6 +510,7 @@ function main() {
   for (const loaded of pagesByFile.values()) {
     checkLinks(loaded, pagesByFile);
     checkTwin(loaded);
+    checkImages(loaded);
   }
   checkSitemap(pages);
   checkIndexStructure(pagesByFile);

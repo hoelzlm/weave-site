@@ -27,7 +27,7 @@ body {
 
 a { color: inherit; }
 
-img { max-width: 100%; display: block; }
+img { max-width: 100%; height: auto; display: block; }
 
 .wrap {
   max-width: var(--max-width);
@@ -216,13 +216,16 @@ img { max-width: 100%; display: block; }
 
 .shots::-webkit-scrollbar { display: none; }
 
+.shots > picture {
+  flex: none;
+  scroll-snap-align: center;
+}
+
 .shots img {
   height: 480px;
   width: auto;
   border-radius: 20px;
   border: 1px solid var(--border);
-  scroll-snap-align: center;
-  flex: none;
 }
 
 @media (max-width: 640px) {
@@ -368,9 +371,10 @@ section { padding: 72px 24px; }
 }
 
 .card.wide .card-copy { flex: 1 1 280px; }
+.card.wide > picture { flex: 0 0 auto; }
 .card.wide img {
-  flex: 0 0 auto;
-  max-height: 420px;
+  height: 420px;
+  width: auto;
   border-radius: 16px;
   border: 1px solid var(--border);
 }
