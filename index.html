@@ -141,7 +141,10 @@
 
   <nav class="nav">
     <a class="nav-brand" href="#">
-      <img src="assets/logo.png" alt="Weave logo">
+      <picture>
+        <source srcset="assets/logo.webp" type="image/webp">
+        <img src="assets/logo.png" width="192" height="192" alt="Weave logo">
+      </picture>
       Weave
     </a>
     <div class="nav-links">
@@ -153,8 +156,11 @@
   </nav>
 
   <header class="hero">
-    <img class="hero-logo" src="assets/logo.png" alt="Weave app icon">
-    <h1>Merge <span class="workout-word"><span class="word-viewport" aria-hidden="true"><span class="word-track"><span>runs.</span><span>cycles.</span><span>hikes.</span><span>walks.</span><span>runs.</span></span></span><span class="sr-only">runs.</span></span> Share<br><span class="gradient-text">route cards</span> worth posting.</h1>
+    <picture>
+      <source srcset="assets/logo.webp" type="image/webp">
+      <img class="hero-logo" src="assets/logo.png" width="192" height="192" alt="Weave app icon">
+    </picture>
+    <h1>Merge <span class="workout-word"><span class="word-viewport" aria-hidden="true"><span class="word-track"><span data-word="runs."></span><span data-word="cycles."></span><span data-word="hikes."></span><span data-word="walks."></span><span data-word="runs."></span></span></span><span class="sr-only">runs.</span></span> Share <br><span class="gradient-text">route cards</span> worth posting.</h1>
     <p class="lede">Weave turns your Apple Watch workout data into designed, Social-Media-ready cards — route map, pace, distance, splits. No screenshots. No Strava account.</p>
     <div class="cta-row">
       <a class="btn btn-primary" href="#beta">Join the beta</a>
@@ -163,10 +169,22 @@
   </header>
 
   <div class="shots">
-    <img src="assets/screenshots/screen-2.png" alt="Weave workout list with Merge tab">
-    <img src="assets/screenshots/screen-1.png" alt="Weave merge picker with three ride workouts selected">
-    <img src="assets/screenshots/screen-3.png" alt="Weave card editor showing four templates and a route map">
-    <img src="assets/screenshots/screen-4.png" alt="Weave transparent sticker export of a route">
+    <picture>
+      <source srcset="assets/screenshots/screen-2.webp" type="image/webp">
+      <img src="assets/screenshots/screen-2.png" width="600" height="1301" fetchpriority="low" alt="Weave workout list with Merge tab">
+    </picture>
+    <picture>
+      <source srcset="assets/screenshots/screen-1.webp" type="image/webp">
+      <img src="assets/screenshots/screen-1.png" width="600" height="1301" fetchpriority="low" alt="Weave merge picker with three ride workouts selected">
+    </picture>
+    <picture>
+      <source srcset="assets/screenshots/screen-3.webp" type="image/webp">
+      <img src="assets/screenshots/screen-3.png" width="600" height="1301" fetchpriority="low" alt="Weave card editor showing four templates and a route map">
+    </picture>
+    <picture>
+      <source srcset="assets/screenshots/screen-4.webp" type="image/webp">
+      <img src="assets/screenshots/screen-4.png" width="600" height="1301" fetchpriority="low" alt="Weave transparent sticker export of a route">
+    </picture>
   </div>
 
   <section class="beta-section" id="beta">
@@ -200,7 +218,10 @@
           <h3>Merge multiple workouts into one card</h3>
           <p>Pick 2+ workouts of the same activity — a training block, a race weekend, a week of rides — and combine them into a single recap card with combined stats and a merged route. Your own recap card from several workouts – in one tap.</p>
         </div>
-        <img src="assets/screenshots/screen-1.png" alt="Selecting three ride workouts to merge">
+        <picture>
+          <source srcset="assets/screenshots/screen-1.webp" type="image/webp">
+          <img src="assets/screenshots/screen-1.png" width="600" height="1301" loading="lazy" decoding="async" alt="Selecting three ride workouts to merge">
+        </picture>
       </div>
       <div class="card">
         <div class="icon">▦</div>
