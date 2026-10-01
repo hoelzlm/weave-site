@@ -23,7 +23,7 @@ Guide pages answer a task people search for (e.g. "share Apple Watch workout on 
 1. **Pick a short, keyword-bearing slug** and use it for both languages (ADR 0001): `my-guide.html` at the root, `de/my-guide.html` for German.
 2. **Copy an existing guide pair** (`share-workout-instagram.html` and its twin) and change, in the `<head>` of both: `<title>` (60 characters at most, with the target phrase), meta description, canonical, the three `hreflang` alternates (`x-default` is the English URL), `og:url`, and the `og:`/`twitter:` title and description (identical to the page's own). Point the language switch at the twin.
 3. **Write the body** inside `<main class="doc guide">`: an `.eyebrow` ("Guide" / "Anleitung"), one `<h1>` with the target phrase, the updated date, a short intro, then one `<section>` per method with an `<h2>` and an ordered list of steps. Use the target phrase once more in a subheading. Quote app and system labels exactly as the UI shows them in that language — the app's in `Weave 2/Localizable.xcstrings`, Apple's and Instagram's from their German help pages. German copy is written for German readers (informal "du"), not translated sentence by sentence. State only what you have checked against Apple's or Instagram's help pages or the app's code, and link the help page you used.
-4. **Images**: at most one or two existing screenshots, marked up as in [Images](#images). Images in any `<section>` after the first need `loading="lazy" decoding="async"`; the check enforces it.
+4. **Images**: at most one or two existing screenshots, marked up as in [Images](#images). Any image after the opening tag of the page's first `<section>` (including one inside that first section) needs `loading="lazy" decoding="async"`, and any image before it must not have it; the check enforces both.
 5. **Link it**: add both URLs to `sitemap.xml`, a link from the relevant feature card on both home pages, and a footer link on both home pages and on every guide.
 6. Run `node scripts/check-site.mjs`; its twin, hreflang, sitemap, link and image checks pick up the new pages without any change to the script.
 
@@ -46,19 +46,18 @@ Run before committing, from the repo root (Node 18+, no dependencies):
 node scripts/check-site.mjs
 ```
 
-It exits non-zero and prints `FAIL <page> [<check>] <reason>` for each problem. It checks that every local or same-domain `href`/`src`/`<meta content>` URL (including `#anchor` targets) resolves; every page has an English/German twin with a matching canonical and `og:url`, reciprocal `hreflang` alternates and a language switch that leads to the twin (with `?lang=en` when it leads to the redirecting root); `sitemap.xml` and the pages agree; both index pages have the same ids, `<section>`s and `.card` blocks; no internal link targets `index.html` (link to the directory instead); `404.html` is `noindex`, uses only root-absolute URLs and links to both home pages (it needs no twin or sitemap entry); and the root redirect script, run as-is against stubbed browsers, sends only German-first browsers to `de/` and respects `?lang=en` and a stored choice.
+It exits non-zero and prints `FAIL <page> [<check>] <reason>` for each problem. It checks that every local or same-domain `href`/`src`/`<meta content>` URL (including `#anchor` targets) resolves; every page has an English/German twin with a matching canonical and `og:url`, reciprocal `hreflang` alternates and a language switch that leads to the twin (with `?lang=en` when it leads to the redirecting root); `sitemap.xml` and the pages agree; both index pages have the same ids, `<section>`s and `.card` blocks; no internal link targets `index.html` (link to the directory instead); `404.html` is `noindex`, uses only root-absolute URLs and links to both home pages (it has no twin and must not be listed in `sitemap.xml`); and the root redirect script, run as-is against stubbed browsers, sends only German-first browsers to `de/` and respects `?lang=en` and a stored choice.
 
 Structured data: each home page must carry exactly one JSON-LD block that parses, describes a `MobileApplication` (name, description, iOS, category, the page's own URL and language, publisher with email, no ratings), and prices every offer in the page's currency (USD on English, EUR on German), with the "Weave Pro" offer equal to the price shown in the Pro band. Change the visible price and the JSON-LD together.
 
-FAQ: both home pages must have a visible `#faq` section (one `.faq-item` per question: an `<h3>` question, then `<p>` answer) with 5 to 7 questions, a `FAQPage` node in that same JSON-LD block with the same questions and answers in the same order, and the same number of questions in English and German. Edit the visible text and the JSON-LD together; keep answers plain text (no links), so the two can match word for word.
+FAQ: both home pages must have a visible `#faq` section (one `.faq-item` per question: an `<h3>` question, then `<p>` answer) with 5 to 7 questions, a `FAQPage` node in that same JSON-LD block with the same questions and answers in the same order, and the same number of questions in English and German. Edit the visible text and the JSON-LD together. The two are compared as the text a reader sees: inline markup (`<strong>Metric</strong>: distance`) and entities (`&rsquo;`) count as the characters they show, so the JSON-LD holds the same words without the tags.
 
 Titles: each home page's `<title>` must name Weave, "app" and workouts within 60 characters, at least one `<h1>`–`<h3>` must do the same, and `og:`/`twitter:` titles and descriptions must equal the page's own title and meta description.
 
 It also checks images: every `<img>` declares a `width` and `height` equal to its file's pixels (and every `<source>` in its `<picture>` has the same shape); no image a page references (including `<source srcset>` and the favicon) is over 150 KB; the images a current browser fetches on first load (the first `<source>` of each `<picture>`, lazy images excluded) add up to at most 400 KB per page; images before a page's first `<section>` (nav, hero, screenshot strip) load eagerly and every image after it has `loading="lazy"`; and nothing references `assets/source/`. Share images (`og:image`) and `apple-touch-icon` are not fetched by visitors and are exempt from the budgets.
 
-It also checks each `<h1>`'s text: as a crawler reads the markup and as a screen reader gets it (with `aria-hidden` parts dropped and CSS-drawn `data-word` text included), the two must be the same sentence, with no words run together (`runs.Share`). A heading with a rotating word (`.word-track`) must contain the first word exactly once and none of the others. The rotating words live in `data-word` attributes inside the `aria-hidden` viewport, are drawn by `::before { content: attr(data-word) }`, and the `.sr-only` word stays the first word; `script.js` only moves the track.
+Each home page has exactly one `<h1>`, and it carries the rotating word (`.word-track`). The check also reads each `<h1>`'s text: as a crawler reads the markup and as a screen reader gets it (with `aria-hidden` parts dropped and CSS-drawn `data-word` text included), the two must be the same sentence, with no words run together (`runs.Share`). A heading with a rotating word (`.word-track`) must contain the first word exactly once and none of the others. The rotating words live in `data-word` attributes inside the `aria-hidden` viewport, are drawn by `::before { content: attr(data-word) }`, and the `.sr-only` word stays the first word; `script.js` only moves the track.
 
-Until the German screenshots land (ticket 02), it fails on the four missing `assets/screenshots/de/screen-*.png` files referenced by `de/index.html`. That is expected; any other failure is a real bug.
 
 ## Images
 
@@ -97,9 +96,9 @@ Live at `workoutstories.app` via GitHub Pages (moved from `weave.rinnebuehl.de` 
 
 ## SEO
 
-- `robots.txt` and `sitemap.xml` at the repo root — 2-page site, `Allow: /`, no `lastmod` (goes stale, not worth tracking).
-- Open Graph / Twitter Card meta tags on both pages, reusing each page's existing `<title>`/`<meta description>`. Share image is `assets/og-image.png` (1200×630, logo centered on the site's gradient) — regenerate by rendering `og-render.html`-style markup through headless Chrome if the logo or gradient ever changes.
-- Canonical URL tag on both pages.
+- `robots.txt` and `sitemap.xml` at the repo root — every English and German page (home pages, privacy, support, guides) except `404.html`, `Allow: /`, no `lastmod` (goes stale, not worth tracking).
+- Open Graph / Twitter Card meta tags on every page, reusing each page's existing `<title>`/`<meta description>`. Share image is `assets/og-image.png` (1200×630, logo centered on the site's gradient) — regenerate by rendering `og-render.html`-style markup through headless Chrome if the logo or gradient ever changes.
+- Canonical URL tag and reciprocal `hreflang` alternates on every page.
 
 ### Measuring
 
@@ -121,10 +120,14 @@ done
 | 2026-10-01 (local, before ticket 04) | `/de/` | 75 | 95 | 100 | 100 | 15.2 s | 0.001 | 2,828 KiB |
 | 2026-10-01 (local, lighter images) | `/` | 100 | 95 | 100 | 100 | 1.9 s | 0 | 170 KiB |
 | 2026-10-01 (local, lighter images) | `/de/` | 100 | 95 | 100 | 100 | 1.9 s | 0 | 173 KiB |
-| 2026-10-01 (local, LCP fix) | `/` | 100 | 95 | 100 | 100 | 1.0 s | 0 | 139 KiB |
-| 2026-10-01 (local, LCP fix) | `/de/` | 100 | 95 | 100 | 100 | 1.0 s | 0 | 141 KiB |
+| 2026-10-01 (local, LCP fix) | `/` | 100 | 100 | 100 | 100 | 1.0 s | 0 | 139 KiB |
+| 2026-10-01 (local, LCP fix) | `/de/` | 100 | 100 | 100 | 100 | 1.0 s | 0 | 141 KiB |
+| 2026-10-01 (local, tester, live pending) | `/?lang=en` | 100 | 100 | 100 | — | 1.3 s | 0 | 147 KiB |
+| 2026-10-01 (local, tester, live pending) | `/de/` | 100 | 100 | 100 | — | 1.2 s | 0 | 151 KiB |
+| 2026-10-01 (local, tester, live pending) | `/share-workout-instagram.html` | — | — | — | — | 1.4 s | — | 76 KiB |
+| 2026-10-01 (local, tester, live pending) | `/de/merge-workouts.html` | — | — | — | — | 1.3 s | — | 90 KiB |
 
-Baseline measured on `weave.rinnebuehl.de`, before the domain move. "Local" rows were measured against `python3 -m http.server` in the repo root, because the live site had no HTTPS certificate yet; they share the live runs' simulated throttling but not the live server's latency, so compare local with local:
+Baseline measured on `weave.rinnebuehl.de`, before the domain move. The tester's rows report three scores (all 100) and leave the fourth ("—") and the guide pages' scores unrecorded; repeat them on the live site once HTTPS is up. "Local" rows were measured against `python3 -m http.server` in the repo root, because the live site had no HTTPS certificate yet; they share the live runs' simulated throttling but not the live server's latency, so compare local with local:
 
 ```bash
 python3 -m http.server 8741 --bind 127.0.0.1 &

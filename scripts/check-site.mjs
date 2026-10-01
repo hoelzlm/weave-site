@@ -263,6 +263,7 @@ function checkSitemap(pages) {
     if (seen.has(url)) fail('sitemap.xml', 'sitemap', `${url} is listed more than once`);
     seen.add(url);
     const file = fileOfUrl(url);
+    if (UNPAIRED_PAGES.has(file)) fail('sitemap.xml', 'sitemap', `${url} is a page outside the bilingual set (${file}) and must not be listed`);
     if (!file || !isFile(file)) fail('sitemap.xml', 'sitemap', `${url} has no matching file`);
     else if (file.endsWith('.html') && urlOf(file) !== url) fail('sitemap.xml', 'sitemap', `${url} is not the canonical URL ${urlOf(file)}`);
   }
@@ -400,17 +401,12 @@ function typesOf(node) {
   return [node?.['@type']].flat().filter(Boolean);
 }
 
+// Inline elements do not break a word or a sentence ("<strong>Metric</strong>: distance" reads
+// "Metric: distance"); every other tag does.
+const INLINE_TAG = /<\/?(?:a|abbr|b|bdi|bdo|cite|code|data|dfn|em|i|kbd|mark|q|s|samp|small|span|strong|sub|sup|time|u|var)\b(?:[^>"']|"[^"]*"|'[^']*')*>/gi;
+
 function textOfElement(html) {
-  return html
-    .replace(/<[^>]*>/g, ' ')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;|&apos;/g, "'")
-    .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
-    .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCodePoint(parseInt(code, 16)))
+  return decodeEntities(html.replace(INLINE_TAG, '').replace(/<[^>]*>/g, ' '))
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -785,7 +781,11 @@ function checkImages(loaded) {
 const VOID_ELEMENTS = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr']);
 
 function decodeEntities(text) {
-  const named = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' };
+  const named = {
+    amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ',
+    lsquo: '‘', rsquo: '’', sbquo: '‚', ldquo: '“', rdquo: '”', bdquo: '„',
+    ndash: '–', mdash: '—', hellip: '…', euro: '€', middot: '·', rarr: '→', times: '×',
+  };
   return text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (entity, code) => {
     if (code[0] === '#') return String.fromCodePoint(code[1].toLowerCase() === 'x' ? parseInt(code.slice(2), 16) : Number(code.slice(1)));
     return named[code.toLowerCase()] ?? entity;
@@ -840,6 +840,20 @@ function readHeading(innerHtml) {
 
 function occurrences(text, word) {
   return text.split(word).length - 1;
+}
+
+// Each home page leads with one <h1>, and it is the one with the rotating word.
+function checkHomeHeadline(pagesByFile) {
+  for (const page of HOME_PAGES) {
+    const loaded = pagesByFile.get(page);
+    if (!loaded) continue;
+    const headings = [...stripScriptsAndComments(loaded.html).matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)];
+    if (headings.length !== 1) {
+      fail(page, 'headline', `expected exactly one <h1>, found ${headings.length}`);
+      continue;
+    }
+    if (!/class="[^"]*\bword-track\b/.test(headings[0][1])) fail(page, 'headline', 'the <h1> has no rotating word (.word-track)');
+  }
 }
 
 function checkHeadlineText(loaded) {
@@ -899,6 +913,7 @@ function main() {
   }
   checkSitemap(pairedPages);
   checkNotFoundPage(pagesByFile);
+  checkHomeHeadline(pagesByFile);
   checkIndexStructure(pagesByFile);
   checkRedirect();
   checkStructuredData();
