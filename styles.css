@@ -5,7 +5,6 @@
   --border: #23262f;
   --text: #f2f3f5;
   --text-dim: #9a9ea8;
-  --text-faint: #62666f;
   --blue: #35c1f0;
   --green: #d7ff3d;
   --gradient: linear-gradient(120deg, var(--blue), var(--green));
@@ -27,7 +26,7 @@ body {
 
 a { color: inherit; }
 
-img { max-width: 100%; display: block; }
+img { max-width: 100%; height: auto; display: block; }
 
 .wrap {
   max-width: var(--max-width);
@@ -119,6 +118,10 @@ img { max-width: 100%; display: block; }
   height: 1.35em;
   line-height: 1.08;
 }
+
+/* The rotating words are drawn from data-word, so the heading's text (what crawlers index and screen
+   readers read, via the .sr-only word) stays one sentence with the first word only. */
+.word-track span::before { content: attr(data-word); }
 
 .sr-only {
   position: absolute;
@@ -216,13 +219,16 @@ img { max-width: 100%; display: block; }
 
 .shots::-webkit-scrollbar { display: none; }
 
+.shots > picture {
+  flex: none;
+  scroll-snap-align: center;
+}
+
 .shots img {
   height: 480px;
   width: auto;
   border-radius: 20px;
   border: 1px solid var(--border);
-  scroll-snap-align: center;
-  flex: none;
 }
 
 @media (max-width: 640px) {
@@ -282,12 +288,12 @@ img { max-width: 100%; display: block; }
 
 .form-note {
   flex-basis: 100%;
-  color: var(--text-faint);
+  color: var(--text-dim);
   font-size: 0.82rem;
   margin: 2px 0 0;
 }
 
-.form-note a { color: var(--text-dim); }
+.form-note a { color: var(--text); }
 
 /* Sections */
 section { padding: 72px 24px; }
@@ -368,9 +374,10 @@ section { padding: 72px 24px; }
 }
 
 .card.wide .card-copy { flex: 1 1 280px; }
+.card.wide > picture { flex: 0 0 auto; }
 .card.wide img {
-  flex: 0 0 auto;
-  max-height: 420px;
+  height: 420px;
+  width: auto;
   border-radius: 16px;
   border: 1px solid var(--border);
 }
@@ -417,7 +424,7 @@ section { padding: 72px 24px; }
 }
 .price-tag .note {
   font-size: 0.82rem;
-  color: var(--text-faint);
+  color: var(--text-dim);
 }
 
 /* Footer */
@@ -434,7 +441,7 @@ footer {
   align-items: center;
   flex-wrap: wrap;
   gap: 16px;
-  color: var(--text-faint);
+  color: var(--text-dim);
   font-size: 0.88rem;
 }
 
@@ -462,7 +469,7 @@ footer {
 }
 
 .doc .updated {
-  color: var(--text-faint);
+  color: var(--text-dim);
   font-size: 0.9rem;
   margin-bottom: 40px;
 }
@@ -505,7 +512,7 @@ footer {
   transition: width 0.55s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-.workout-word[data-fit] .word-track span { white-space: nowrap; }
+.workout-word[data-fit] .word-track span { white-space: nowrap; width: max-content; }
 
 @media (prefers-reduced-motion: reduce) {
   .workout-word[data-fit] { transition: none; }
@@ -525,3 +532,85 @@ footer {
 
 .doc h1 { hyphens: auto; overflow-wrap: break-word; }
 .price-tag .amount { font-size: clamp(2rem, 9vw, 3rem); }
+
+/* FAQ */
+.faq-list {
+  max-width: 760px;
+  margin: 0 auto;
+  display: grid;
+  gap: 14px;
+}
+
+.faq-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px 24px;
+}
+
+.faq-item h3 {
+  font-size: 1.05rem;
+  margin: 0 0 8px;
+}
+
+.faq-item p {
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+@media (max-width: 400px) {
+  .faq-item { padding: 18px; }
+}
+
+/* Guide pages: a .doc page split into <section>s, one per method, so images below the first one load lazily */
+.footer-links { flex-wrap: wrap; row-gap: 10px; }
+
+.doc.guide section { padding: 0; }
+
+.doc.guide .eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--blue);
+}
+
+.doc.guide h1 { margin-top: 8px; hyphens: manual; }
+
+.doc ol { padding-left: 22px; }
+.doc strong { color: var(--text); }
+.doc a { color: var(--text); }
+
+.guide-shot { display: block; margin: 28px 0; }
+
+.guide-shot img {
+  height: 480px;
+  width: auto;
+  margin: 0 auto;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+
+@media (max-width: 640px) {
+  .guide-shot img { height: 380px; }
+}
+
+.doc .guide-next {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+/* Narrow phones (320 px): the German nav ("Datenschutz", "English") would otherwise run into the brand */
+.nav { gap: 12px; }
+.nav-brand { flex-shrink: 0; }
+.nav-links { white-space: nowrap; }
+
+@media (max-width: 360px) {
+  .nav { padding: 16px 12px; }
+  .nav-brand { gap: 8px; }
+  .nav-links { gap: 10px; }
+  .lang-switch { padding: 2px 8px; }
+}
