@@ -35,6 +35,8 @@ Structured data: each home page must carry exactly one JSON-LD block that parses
 
 FAQ: both home pages must have a visible `#faq` section (one `.faq-item` per question: an `<h3>` question, then `<p>` answer) with 5 to 7 questions, a `FAQPage` node in that same JSON-LD block with the same questions and answers in the same order, and the same number of questions in English and German. Edit the visible text and the JSON-LD together; keep answers plain text (no links), so the two can match word for word.
 
+Titles: each home page's `<title>` must name Weave, "app" and workouts within 60 characters, at least one `<h1>`–`<h3>` must do the same, and `og:`/`twitter:` titles and descriptions must equal the page's own title and meta description.
+
 Until the German screenshots land (ticket 02), it fails on the four missing `assets/screenshots/de/screen-*.png` files referenced by `de/index.html`. That is expected; any other failure is a real bug.
 
 ## Status

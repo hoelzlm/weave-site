@@ -574,6 +574,54 @@ function checkFaq() {
   }
 }
 
+// Titles: "Weave" alone collides with unrelated brands, so each home page's title and at
+// least one visible heading must name Weave together with "app" and what it does (workouts),
+// the title must fit a search result, and share titles/descriptions must repeat the page's own.
+
+const TITLE_MAX_LENGTH = 60;
+
+function namesTheApp(text) {
+  return /\bWeave\b/.test(text) && /\bapp\b/i.test(text) && /workout/i.test(text);
+}
+
+function metaContent(loaded, key, value) {
+  return loaded.tags
+    .filter((tag) => tag.name === 'meta' && tag.attributes[key] === value)
+    .map((tag) => textOfElement(tag.attributes.content ?? ''));
+}
+
+function checkAppTitles(pagesByFile) {
+  for (const page of HOME_PAGES) {
+    const loaded = pagesByFile.get(page);
+    if (!loaded) continue;
+    const markup = stripScriptsAndComments(loaded.html);
+    const titles = [...markup.matchAll(/<title\b[^>]*>([\s\S]*?)<\/title>/gi)].map(([, inner]) => textOfElement(inner));
+    if (titles.length !== 1) {
+      fail(page, 'title', `expected one <title>, found ${titles.length}`);
+      continue;
+    }
+    const [title] = titles;
+    if (!namesTheApp(title)) fail(page, 'title', `"${title}" must name "Weave", "app" and what it does (workout …)`);
+    if ([...title].length > TITLE_MAX_LENGTH) fail(page, 'title', `"${title}" is ${[...title].length} characters, keep it within ${TITLE_MAX_LENGTH}`);
+
+    const headings = [...markup.matchAll(/<h([1-3])\b[^>]*>([\s\S]*?)<\/h\1>/gi)].map(([, , inner]) => textOfElement(inner));
+    if (!headings.some(namesTheApp)) fail(page, 'title', 'no <h1>–<h3> names "Weave", "app" and what it does (workout …)');
+
+    const description = metaContent(loaded, 'name', 'description');
+    if (description.length !== 1 || description[0] === '') fail(page, 'title', `expected one non-empty meta description, found ${description.length}`);
+    for (const [key, value, expected] of [
+      ['property', 'og:title', title],
+      ['name', 'twitter:title', title],
+      ['property', 'og:description', description[0]],
+      ['name', 'twitter:description', description[0]],
+    ]) {
+      const found = metaContent(loaded, key, value);
+      if (found.length !== 1) fail(page, 'title', `expected one ${value}, found ${found.length}`);
+      else if (found[0] !== expected) fail(page, 'title', `${value} is "${found[0]}", expected it to match the page's ${value.split(':')[1]}`);
+    }
+  }
+}
+
 function report() {
   for (const { page, check, message } of failures) console.log(`FAIL ${page} [${check}] ${message}`);
   console.log(failures.length === 0 ? 'All site checks passed.' : `\n${failures.length} failure(s).`);
@@ -592,6 +640,7 @@ function main() {
   checkRedirect();
   checkStructuredData();
   checkFaq();
+  checkAppTitles(pagesByFile);
   report();
 }
 
