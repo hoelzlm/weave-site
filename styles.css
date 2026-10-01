@@ -524,3 +524,29 @@ footer {
 
 .doc h1 { hyphens: auto; overflow-wrap: break-word; }
 .price-tag .amount { font-size: clamp(2rem, 9vw, 3rem); }
+
+/* FAQ */
+.faq-list {
+  max-width: 760px;
+  margin: 0 auto;
+  display: grid;
+  gap: 14px;
+}
+
+.faq-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px 24px;
+}
+
+.faq-item h3 {
+  font-size: 1.05rem;
+  margin: 0 0 8px;
+}
+
+.faq-item p {
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  margin: 0;
+}

@@ -35,6 +35,12 @@ node scripts/check-site.mjs
 
 It exits non-zero and prints `FAIL <page> [<check>] <reason>` for each problem. It checks that every local or same-domain `href`/`src`/`<meta content>` URL (including `#anchor` targets) resolves; every page has an English/German twin with a matching canonical and `og:url`, reciprocal `hreflang` alternates and a language switch that leads to the twin (with `?lang=en` when it leads to the redirecting root); `sitemap.xml` and the pages agree; both index pages have the same ids, `<section>`s and `.card` blocks; no internal link targets `index.html` (link to the directory instead); `404.html` is `noindex`, uses only root-absolute URLs and links to both home pages (it needs no twin or sitemap entry); and the root redirect script, run as-is against stubbed browsers, sends only German-first browsers to `de/` and respects `?lang=en` and a stored choice.
 
+Structured data: each home page must carry exactly one JSON-LD block that parses, describes a `MobileApplication` (name, description, iOS, category, the page's own URL and language, publisher with email, no ratings), and prices every offer in the page's currency (USD on English, EUR on German), with the "Weave Pro" offer equal to the price shown in the Pro band. Change the visible price and the JSON-LD together.
+
+FAQ: both home pages must have a visible `#faq` section (one `.faq-item` per question: an `<h3>` question, then `<p>` answer) with 5 to 7 questions, a `FAQPage` node in that same JSON-LD block with the same questions and answers in the same order, and the same number of questions in English and German. Edit the visible text and the JSON-LD together; keep answers plain text (no links), so the two can match word for word.
+
+Titles: each home page's `<title>` must name Weave, "app" and workouts within 60 characters, at least one `<h1>`–`<h3>` must do the same, and `og:`/`twitter:` titles and descriptions must equal the page's own title and meta description.
+
 Until the German screenshots land (ticket 02), it fails on the four missing `assets/screenshots/de/screen-*.png` files referenced by `de/index.html`. That is expected; any other failure is a real bug.
 
 ## Status

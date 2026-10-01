@@ -22,8 +22,8 @@
       if (/^de(-|$)/i.test(preferred)) location.replace(target);
     })();
   </script>
-  <title>Weave – Workout Cards for Your Instagram Stories</title>
-  <meta name="description" content="Weave turns your Apple Watch workout data into designed, Instagram-ready share cards. Merge multiple workouts into one recap. No Strava account needed.">
+  <title>Weave App – Apple Watch Workout Cards for Instagram Stories</title>
+  <meta name="description" content="The Weave iPhone app turns your Apple Watch workouts into designed, Instagram-ready cards and stickers. Merge several workouts into one recap. No Strava needed.">
   <link rel="canonical" href="https://workoutstories.app/">
   <link rel="alternate" hreflang="en" href="https://workoutstories.app/">
   <link rel="alternate" hreflang="de" href="https://workoutstories.app/de/">
@@ -37,13 +37,105 @@
   <meta property="og:site_name" content="Weave">
   <meta property="og:locale" content="en_US">
   <meta property="og:locale:alternate" content="de_DE">
-  <meta property="og:title" content="Weave – Workout Cards for Your Instagram Stories">
-  <meta property="og:description" content="Weave turns your Apple Watch workout data into designed, Instagram-ready share cards. Merge multiple workouts into one recap. No Strava account needed.">
+  <meta property="og:title" content="Weave App – Apple Watch Workout Cards for Instagram Stories">
+  <meta property="og:description" content="The Weave iPhone app turns your Apple Watch workouts into designed, Instagram-ready cards and stickers. Merge several workouts into one recap. No Strava needed.">
   <meta property="og:image" content="https://workoutstories.app/assets/og-image.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Weave – Workout Cards for Your Instagram Stories">
-  <meta name="twitter:description" content="Weave turns your Apple Watch workout data into designed, Instagram-ready share cards. Merge multiple workouts into one recap. No Strava account needed.">
+  <meta name="twitter:title" content="Weave App – Apple Watch Workout Cards for Instagram Stories">
+  <meta name="twitter:description" content="The Weave iPhone app turns your Apple Watch workouts into designed, Instagram-ready cards and stickers. Merge several workouts into one recap. No Strava needed.">
   <meta name="twitter:image" content="https://workoutstories.app/assets/og-image.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "MobileApplication",
+        "name": "Weave",
+        "url": "https://workoutstories.app/",
+        "inLanguage": "en",
+        "description": "Weave is an iPhone app that turns the workouts in Apple Health, recorded with your Apple Watch or iPhone, into designed, Instagram-ready share cards and transparent stickers, and merges several workouts of the same activity into one recap card.",
+        "operatingSystem": "iOS",
+        "applicationCategory": "HealthApplication",
+        "image": "https://workoutstories.app/assets/favicon.png",
+        "offers": [
+          {
+            "@type": "Offer",
+            "name": "Weave",
+            "price": "0",
+            "priceCurrency": "USD",
+            "description": "Free download with the Clean, Bold and Lift templates; exports carry a small Weave watermark."
+          },
+          {
+            "@type": "Offer",
+            "name": "Weave Pro",
+            "price": "6.99",
+            "priceCurrency": "USD",
+            "description": "One-time in-app purchase, not a subscription: multi-workout merge, all templates, vector route mode and no watermark."
+          }
+        ],
+        "publisher": {
+          "@type": "Organization",
+          "name": "Rinnebühl Labs",
+          "email": "info@rinnebuehl.de"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "inLanguage": "en",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Do I need a Strava account?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Weave needs no Strava account and no account of its own. It reads your workouts straight from Apple Health on your iPhone, so there is nothing to sign up for or connect."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do I need an Apple Watch?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Weave works with any workout saved in Apple Health, whether you recorded it with an Apple Watch, with your iPhone or with another app that saves workouts to Apple Health. A route map needs a GPS route saved with the workout, and heart rate graphics need heart rate data, which an Apple Watch records for you."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I merge a week of runs into one card?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, with Weave Pro. Pick two or more workouts of the same activity, such as every run from this week, and Weave combines them into one Recap card with your combined distance, time and pace and a breakdown of the individual workouts. Activities can’t be mixed: runs merge with runs, rides with rides."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Weave a subscription?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Weave is free to download; free cards carry a small Weave watermark. Weave Pro is a one-time in-app purchase that unlocks merging, all templates, vector routes and per-route colors, and removes the watermark. Nothing renews."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does my workout data leave my phone?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Weave has no account, no server and no tracking: it reads your workouts from Apple Health and builds every card on your iPhone. Rinnebühl Labs never receives your workout data, and a card leaves your phone only when you share it."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Which units does Weave use?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Metric: distance in kilometers, pace per kilometer and speed in km/h. There is no setting for miles."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
 
@@ -150,6 +242,39 @@
       <div class="price-tag">
         <div class="amount">$6.99</div>
         <div class="note">one-time unlock · no subscription</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq" id="faq">
+    <div class="section-head">
+      <span class="eyebrow">FAQ</span>
+      <h2>Questions about Weave, the app for Apple Watch workout cards</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3>Do I need a Strava account?</h3>
+        <p>No. Weave needs no Strava account and no account of its own. It reads your workouts straight from Apple Health on your iPhone, so there is nothing to sign up for or connect.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Do I need an Apple Watch?</h3>
+        <p>No. Weave works with any workout saved in Apple Health, whether you recorded it with an Apple Watch, with your iPhone or with another app that saves workouts to Apple Health. A route map needs a GPS route saved with the workout, and heart rate graphics need heart rate data, which an Apple Watch records for you.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Can I merge a week of runs into one card?</h3>
+        <p>Yes, with Weave Pro. Pick two or more workouts of the same activity, such as every run from this week, and Weave combines them into one Recap card with your combined distance, time and pace and a breakdown of the individual workouts. Activities can’t be mixed: runs merge with runs, rides with rides.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Is Weave a subscription?</h3>
+        <p>No. Weave is free to download; free cards carry a small Weave watermark. Weave Pro is a one-time in-app purchase that unlocks merging, all templates, vector routes and per-route colors, and removes the watermark. Nothing renews.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Does my workout data leave my phone?</h3>
+        <p>No. Weave has no account, no server and no tracking: it reads your workouts from Apple Health and builds every card on your iPhone. Rinnebühl Labs never receives your workout data, and a card leaves your phone only when you share it.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Which units does Weave use?</h3>
+        <p>Metric: distance in kilometers, pace per kilometer and speed in km/h. There is no setting for miles.</p>
       </div>
     </div>
   </section>
