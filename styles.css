@@ -602,3 +602,15 @@ footer {
   padding-top: 24px;
   border-top: 1px solid var(--border);
 }
+
+/* Narrow phones (320 px): the German nav ("Datenschutz", "English") would otherwise run into the brand */
+.nav { gap: 12px; }
+.nav-brand { flex-shrink: 0; }
+.nav-links { white-space: nowrap; }
+
+@media (max-width: 360px) {
+  .nav { padding: 16px 12px; }
+  .nav-brand { gap: 8px; }
+  .nav-links { gap: 10px; }
+  .lang-switch { padding: 2px 8px; }
+}
