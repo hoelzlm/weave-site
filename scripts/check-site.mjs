@@ -355,6 +355,152 @@ function checkRedirect() {
   for (const testCase of REDIRECT_CASES) checkRedirectCase(scripts[0], testCase);
 }
 
+// Structured data: each home page carries exactly one JSON-LD block describing the app.
+// Its offers must be priced in the page's currency, and the Weave Pro offer must state
+// the same price the visitor sees in the Pro band.
+
+const HOME_PAGES = ['index.html', 'de/index.html'];
+const CURRENCY_BY_LANGUAGE = { en: 'USD', de: 'EUR' };
+
+function jsonLdBlocks(html) {
+  return [...html.replace(/<!--[\s\S]*?-->/g, '').matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
+    .filter(([, attributes]) => (parseAttributes(attributes).type ?? '').trim().toLowerCase() === 'application/ld+json')
+    .map(([, , body]) => body);
+}
+
+function parseJsonLd(page, body) {
+  try {
+    return JSON.parse(body);
+  } catch (error) {
+    fail(page, 'structured data', `JSON-LD is not valid JSON: ${error.message}`);
+    return null;
+  }
+}
+
+function jsonLdNodes(data) {
+  const nodes = Array.isArray(data) ? data : [data];
+  return nodes.flatMap((node) => (node && Array.isArray(node['@graph']) ? node['@graph'] : [node])).filter(Boolean);
+}
+
+function typesOf(node) {
+  return [node?.['@type']].flat().filter(Boolean);
+}
+
+function textOfElement(html) {
+  return html
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// "$6.99" -> { amount: "6.99", currency: "USD" }; "6,99 €" -> { amount: "6.99", currency: "EUR" }
+function parseVisiblePrice(text) {
+  const currency = /\$|US\s?D/.test(text) ? 'USD' : /€|EUR/.test(text) ? 'EUR' : null;
+  const number = text.match(/\d+(?:[.,]\d{1,2})?/);
+  if (!currency || !number) return null;
+  return { amount: Number(number[0].replace(',', '.')).toFixed(2), currency };
+}
+
+function visiblePrices(html) {
+  return [...stripScriptsAndComments(html).matchAll(/<div\b[^>]*\bclass="[^"]*\bamount\b[^"]*"[^>]*>([\s\S]*?)<\/div>/gi)]
+    .map(([, inner]) => textOfElement(inner));
+}
+
+function requireText(page, node, field, label) {
+  const value = node?.[field];
+  if (typeof value !== 'string' || value.trim() === '') {
+    fail(page, 'structured data', `${label} has no "${field}"`);
+    return false;
+  }
+  return true;
+}
+
+function checkOffers(page, app, language) {
+  const offers = [app.offers].flat().filter(Boolean);
+  const currency = CURRENCY_BY_LANGUAGE[language];
+  if (offers.length === 0) {
+    fail(page, 'structured data', 'MobileApplication has no "offers"');
+    return;
+  }
+  for (const offer of offers) {
+    const label = `offer "${offer.name ?? '(unnamed)'}"`;
+    if (!typesOf(offer).includes('Offer')) fail(page, 'structured data', `${label} is not an Offer`);
+    if (typeof offer.price !== 'string' && typeof offer.price !== 'number') fail(page, 'structured data', `${label} has no "price"`);
+    else if (!/^\d+(\.\d+)?$/.test(String(offer.price))) fail(page, 'structured data', `${label} price "${offer.price}" is not a plain decimal number`);
+    if (offer.priceCurrency !== currency) fail(page, 'structured data', `${label} priceCurrency is ${offer.priceCurrency ?? 'missing'}, expected ${currency} on a ${language} page`);
+  }
+  const pro = offers.filter((offer) => offer.name === 'Weave Pro');
+  if (pro.length !== 1) {
+    fail(page, 'structured data', `expected one offer named "Weave Pro", found ${pro.length}`);
+    return;
+  }
+  const shown = visiblePrices(read(page));
+  if (shown.length !== 1) {
+    fail(page, 'structured data', `expected one visible Pro price (.amount), found ${shown.length}`);
+    return;
+  }
+  const visible = parseVisiblePrice(shown[0]);
+  if (!visible) {
+    fail(page, 'structured data', `cannot read a price and currency from the visible price "${shown[0]}"`);
+    return;
+  }
+  if (visible.currency !== currency) fail(page, 'structured data', `visible price "${shown[0]}" is in ${visible.currency}, expected ${currency} on a ${language} page`);
+  if (Number(pro[0].price).toFixed(2) !== visible.amount || pro[0].priceCurrency !== visible.currency) {
+    fail(page, 'structured data', `Weave Pro offer is ${pro[0].price} ${pro[0].priceCurrency}, but the page shows "${shown[0]}"`);
+  }
+}
+
+function checkApplicationNode(page, app) {
+  const language = languageOf(page);
+  const label = 'MobileApplication';
+  for (const field of ['name', 'description', 'operatingSystem', 'applicationCategory']) requireText(page, app, field, label);
+  if (app.name !== undefined && app.name !== 'Weave') fail(page, 'structured data', `${label} name is "${app.name}", expected "Weave"`);
+  if (typeof app.operatingSystem === 'string' && !/\biOS\b/.test(app.operatingSystem)) fail(page, 'structured data', `${label} operatingSystem "${app.operatingSystem}" does not name iOS`);
+  if (app.url !== urlOf(page)) fail(page, 'structured data', `${label} url is ${app.url ?? 'missing'}, expected ${urlOf(page)}`);
+  if (app.inLanguage !== language) fail(page, 'structured data', `${label} inLanguage is ${app.inLanguage ?? 'missing'}, expected "${language}"`);
+  if (app.image !== undefined) {
+    const file = fileOfUrl(app.image);
+    if (!file || !isFile(file)) fail(page, 'structured data', `${label} image ${app.image} does not resolve to a site file`);
+  }
+  if (app.aggregateRating !== undefined || app.review !== undefined) {
+    fail(page, 'structured data', `${label} declares ratings or reviews; add them only once the App Store has real ones`);
+  }
+  const publisher = app.publisher;
+  if (!publisher || !typesOf(publisher).includes('Organization')) fail(page, 'structured data', `${label} has no Organization "publisher"`);
+  else {
+    if (publisher.name !== 'Rinnebühl Labs') fail(page, 'structured data', `publisher name is "${publisher.name ?? ''}", expected "Rinnebühl Labs"`);
+    if (!/^[^@\s]+@[^@\s]+\.[a-z]+$/i.test(publisher.email ?? '')) fail(page, 'structured data', 'publisher has no valid "email"');
+  }
+  checkOffers(page, app, language);
+}
+
+function checkStructuredData() {
+  for (const page of HOME_PAGES) {
+    if (!isFile(page)) continue;
+    const blocks = jsonLdBlocks(read(page));
+    if (blocks.length !== 1) {
+      fail(page, 'structured data', `expected exactly one JSON-LD block, found ${blocks.length}`);
+      if (blocks.length === 0) continue;
+    }
+    const data = parseJsonLd(page, blocks[0]);
+    if (!data) continue;
+    if (!/^https?:\/\/schema\.org\/?$/.test([data['@context']].flat()[0] ?? '')) fail(page, 'structured data', `@context is ${JSON.stringify(data['@context'])}, expected "https://schema.org"`);
+    const apps = jsonLdNodes(data).filter((node) => typesOf(node).some((type) => type === 'MobileApplication' || type === 'SoftwareApplication'));
+    if (apps.length !== 1) {
+      fail(page, 'structured data', `expected one MobileApplication node, found ${apps.length}`);
+      continue;
+    }
+    if (!typesOf(apps[0]).includes('MobileApplication')) fail(page, 'structured data', 'the app node should be typed MobileApplication');
+    checkApplicationNode(page, apps[0]);
+  }
+}
+
 function report() {
   for (const { page, check, message } of failures) console.log(`FAIL ${page} [${check}] ${message}`);
   console.log(failures.length === 0 ? 'All site checks passed.' : `\n${failures.length} failure(s).`);
@@ -371,6 +517,7 @@ function main() {
   checkSitemap(pages);
   checkIndexStructure(pagesByFile);
   checkRedirect();
+  checkStructuredData();
   report();
 }
 
