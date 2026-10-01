@@ -87,7 +87,7 @@ Add `loading="lazy" decoding="async"` to the `<img>` when it sits below the firs
 
 ## Status
 
-Live at `workoutstories.app` via GitHub Pages (moved from `weave.rinnebuehl.de` on 2026-09-30, which redirects here). Beta signup form posts to Formspree (`mppazblp`).
+Live at `https://workoutstories.app` via GitHub Pages, HTTPS enforced (Let's Encrypt certificate issued and renewed by GitHub). DNS at Namecheap: four `A` and four `AAAA` records on `@` for GitHub Pages, `www` a `CNAME` to `hoelzlm.github.io`. Moved from `weave.rinnebuehl.de` on 2026-09-30; that host is a Namecheap URL redirect (301, HTTP only) to the home page, so old deep links land on `/`. Beta signup form posts to Formspree (`mppazblp`).
 
 ## Outlook — what's next
 
