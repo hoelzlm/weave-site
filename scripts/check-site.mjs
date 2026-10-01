@@ -498,6 +498,85 @@ function checkImages(loaded) {
   checkImageSourcesUnreferenced(loaded);
 }
 
+// Headline: the rotating word is visual only. Its words are drawn from data-word by CSS, inside an
+// aria-hidden box, so the heading's text is one sentence for crawlers and screen readers alike.
+
+const VOID_ELEMENTS = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr']);
+
+function decodeEntities(text) {
+  const named = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' };
+  return text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (entity, code) => {
+    if (code[0] === '#') return String.fromCodePoint(code[1].toLowerCase() === 'x' ? parseInt(code.slice(2), 16) : Number(code.slice(1)));
+    return named[code.toLowerCase()] ?? entity;
+  });
+}
+
+function collapse(text) {
+  return text.replace(/\s+/g, ' ').trim();
+}
+
+// The heading's text two ways: as a crawler reads the markup (text nodes, <br> as a break), and as a
+// screen reader gets it (aria-hidden subtrees dropped, CSS-drawn data-word text included). Also the
+// rotating words: the data-word or text of each .word-track item.
+function readHeading(innerHtml) {
+  let crawled = '';
+  let spoken = '';
+  const rotating = [];
+  const stack = [];
+  const hidden = () => stack.some((element) => element.hidden);
+  const inTrack = () => stack.at(-2)?.track;
+  for (const [, text, closing, name, source] of innerHtml.matchAll(/([^<]+)|<(\/?)([a-zA-Z][a-zA-Z0-9-]*)\b((?:[^>"']|"[^"]*"|'[^']*')*)>/g)) {
+    if (text !== undefined) {
+      const decoded = decodeEntities(text);
+      crawled += decoded;
+      if (!hidden()) spoken += decoded;
+      if (inTrack()) stack.at(-1).words.push(decoded);
+      continue;
+    }
+    const tag = name.toLowerCase();
+    if (closing) {
+      const element = stack.pop();
+      if (element && stack.at(-1)?.track) rotating.push(collapse(element.words.join('')));
+      continue;
+    }
+    if (tag === 'br') {
+      crawled += ' ';
+      if (!hidden()) spoken += ' ';
+      continue;
+    }
+    if (VOID_ELEMENTS.has(tag) || source.trim().endsWith('/')) continue;
+    const attributes = parseAttributes(source);
+    const element = { hidden: attributes['aria-hidden'] === 'true', track: hasToken(attributes.class, 'word-track'), words: [] };
+    stack.push(element);
+    if (attributes['data-word'] !== undefined) {
+      const word = decodeEntities(attributes['data-word']);
+      if (!hidden()) spoken += word;
+      if (inTrack()) element.words.push(word);
+    }
+  }
+  return { crawled: collapse(crawled), spoken: collapse(spoken), rotating: [...new Set(rotating.filter(Boolean))] };
+}
+
+function occurrences(text, word) {
+  return text.split(word).length - 1;
+}
+
+function checkHeadlineText(loaded) {
+  const markup = stripScriptsAndComments(loaded.html);
+  for (const [, innerHtml] of markup.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)) {
+    const { crawled, spoken, rotating } = readHeading(innerHtml);
+    if (crawled !== spoken) fail(loaded.page, 'headline', `<h1> reads "${crawled}" to crawlers but "${spoken}" to screen readers`);
+    if (/[.!?,:;][^\s.!?,:;"'”“)]/u.test(crawled)) fail(loaded.page, 'headline', `<h1> runs words together: "${crawled}"`);
+    if (rotating.length === 0) continue;
+    const [first, ...others] = rotating;
+    const count = occurrences(crawled, first);
+    if (count !== 1) fail(loaded.page, 'headline', `<h1> text "${crawled}" contains its first rotating word "${first}" ${count} times, expected once`);
+    for (const word of others.filter((other) => !first.includes(other))) {
+      if (occurrences(crawled, word) > 0) fail(loaded.page, 'headline', `<h1> text "${crawled}" contains the rotating word "${word}"; draw it from data-word`);
+    }
+  }
+}
+
 function report() {
   for (const { page, check, message } of failures) console.log(`FAIL ${page} [${check}] ${message}`);
   console.log(failures.length === 0 ? 'All site checks passed.' : `\n${failures.length} failure(s).`);
@@ -511,6 +590,7 @@ function main() {
     checkLinks(loaded, pagesByFile);
     checkTwin(loaded);
     checkImages(loaded);
+    checkHeadlineText(loaded);
   }
   checkSitemap(pages);
   checkIndexStructure(pagesByFile);

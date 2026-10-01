@@ -9,7 +9,7 @@ Marketing site + privacy policy for the Weave iOS app. Plain HTML/CSS, no build 
 - `support.html` — support page (linked from the App Store listing)
 - `de/` — German copies of the three pages; the root redirects German browsers here (see `docs/adr/0001-german-under-de-path-with-root-redirect.md`). A copy change goes in both languages by hand.
 - `styles.css` — shared styles
-- `script.js` — headline word-cycle animation and the language-switch choice
+- `script.js` — headline word-cycle animation (visual only; the heading text keeps the first word) and the language-switch choice
 - `assets/` — logo, favicon, screenshots (copied from `Weave 2/docs/marketing/`), resized for the web; the full-resolution originals live in `assets/source/` and no page references them (see [Images](#images))
 - `CNAME` — custom domain for GitHub Pages (`workoutstories.app`)
 
@@ -32,6 +32,8 @@ node scripts/check-site.mjs
 It exits non-zero and prints `FAIL <page> [<check>] <reason>` for each problem. It checks that every local or same-domain `href`/`src`/`<meta content>` URL (including `#anchor` targets) resolves; every page has an English/German twin with a matching canonical and `og:url`, reciprocal `hreflang` alternates and a language switch that leads to the twin (with `?lang=en` when it leads to the redirecting root); `sitemap.xml` and the pages agree; both index pages have the same ids, `<section>`s and `.card` blocks; and the root redirect script, run as-is against stubbed browsers, sends only German-first browsers to `de/` and respects `?lang=en` and a stored choice.
 
 It also checks images: every `<img>` declares a `width` and `height` equal to its file's pixels (and every `<source>` in its `<picture>` has the same shape); no image a page references (including `<source srcset>` and the favicon) is over 150 KB; the images a current browser fetches on first load (the first `<source>` of each `<picture>`, lazy images excluded) add up to at most 400 KB per page; images before a page's first `<section>` (nav, hero, screenshot strip) load eagerly and every image after it has `loading="lazy"`; and nothing references `assets/source/`. Share images (`og:image`) and `apple-touch-icon` are not fetched by visitors and are exempt from the budgets.
+
+It also checks each `<h1>`'s text: as a crawler reads the markup and as a screen reader gets it (with `aria-hidden` parts dropped and CSS-drawn `data-word` text included), the two must be the same sentence, with no words run together (`runs.Share`). A heading with a rotating word (`.word-track`) must contain the first word exactly once and none of the others. The rotating words live in `data-word` attributes inside the `aria-hidden` viewport, are drawn by `::before { content: attr(data-word) }`, and the `.sr-only` word stays the first word; `script.js` only moves the track.
 
 Until the German screenshots land (ticket 02), it fails on the four missing `assets/screenshots/de/screen-*.png` files referenced by `de/index.html`. That is expected; any other failure is a real bug.
 

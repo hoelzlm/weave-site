@@ -120,6 +120,10 @@ img { max-width: 100%; height: auto; display: block; }
   line-height: 1.08;
 }
 
+/* The rotating words are drawn from data-word, so the heading's text (what crawlers index and screen
+   readers read, via the .sr-only word) stays one sentence with the first word only. */
+.word-track span::before { content: attr(data-word); }
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -509,7 +513,7 @@ footer {
   transition: width 0.55s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-.workout-word[data-fit] .word-track span { white-space: nowrap; }
+.workout-word[data-fit] .word-track span { white-space: nowrap; width: max-content; }
 
 @media (prefers-reduced-motion: reduce) {
   .workout-word[data-fit] { transition: none; }

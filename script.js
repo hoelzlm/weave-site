@@ -2,9 +2,10 @@ const workoutWord = document.querySelector('.workout-word');
 
 if (workoutWord) {
   const wordTrack = workoutWord.querySelector('.word-track');
-  const accessibleWord = workoutWord.querySelector('.sr-only');
   const items = Array.from(wordTrack.children);
   const wordCount = items.length - 1; // the last item repeats the first for a seamless loop
+  // The visible word rotates; the heading's text (the .sr-only word) stays the first word, so crawlers
+  // and screen readers always get the same sentence.
   const fitsToWord = workoutWord.hasAttribute('data-fit');
   const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
   let wordIndex = 0;
@@ -12,15 +13,13 @@ if (workoutWord) {
 
   const fitWidth = (index) => {
     if (!fitsToWord) return;
-    const range = document.createRange();
-    range.selectNodeContents(items[index % wordCount]);
-    workoutWord.style.width = `${Math.ceil(range.getBoundingClientRect().width)}px`;
+    // Each word is a max-content box whose text is CSS generated content, so measure the box itself.
+    workoutWord.style.width = `${Math.ceil(items[index % wordCount].getBoundingClientRect().width)}px`;
   };
 
   const setWord = (index) => {
     wordIndex = index;
     wordTrack.style.transform = `translateY(calc(0.14em - ${index * 1.35}em))`;
-    accessibleWord.textContent = items[index % wordCount].textContent;
     fitWidth(index);
   };
 
