@@ -371,8 +371,9 @@ function checkNoIndexHtmlLinks(loaded) {
 }
 
 // Structured data: each home page carries exactly one JSON-LD block describing the app.
-// Its offers must be priced in the page's currency, and the Weave Pro offer must state
-// the same price the visitor sees in the Pro band.
+// Its offers must be priced in the page's currency. A page that shows a price (.amount) must
+// carry exactly one "Weave Pro" offer stating that same price; while the site states no Pro price,
+// no page shows one and Weave Pro has no offer.
 
 const HOME_PAGES = ['index.html', 'de/index.html'];
 const CURRENCY_BY_LANGUAGE = { en: 'USD', de: 'EUR' };
@@ -448,11 +449,12 @@ function checkOffers(page, app, language) {
     if (offer.priceCurrency !== currency) fail(page, 'structured data', `${label} priceCurrency is ${offer.priceCurrency ?? 'missing'}, expected ${currency} on a ${language} page`);
   }
   const pro = offers.filter((offer) => offer.name === 'Weave Pro');
+  const shown = visiblePrices(read(page));
+  if (shown.length === 0 && pro.length === 0) return;
   if (pro.length !== 1) {
-    fail(page, 'structured data', `expected one offer named "Weave Pro", found ${pro.length}`);
+    fail(page, 'structured data', `the page shows a price, so expected one offer named "Weave Pro", found ${pro.length}`);
     return;
   }
-  const shown = visiblePrices(read(page));
   if (shown.length !== 1) {
     fail(page, 'structured data', `expected one visible Pro price (.amount), found ${shown.length}`);
     return;
@@ -490,6 +492,31 @@ function checkApplicationNode(page, app) {
     if (!/^[^@\s]+@[^@\s]+\.[a-z]+$/i.test(publisher.email ?? '')) fail(page, 'structured data', 'publisher has no valid "email"');
   }
   checkOffers(page, app, language);
+}
+
+// App Store: each home page's hero links to the live listing (the radio spot sends phone users to the
+// home page, so the button must be on the first screen), and every Smart App Banner names the app.
+// English pages use the locale-neutral listing URL, German pages the /de/ one.
+const APP_ID = '6798253561';
+const APP_STORE_URL = { en: `https://apps.apple.com/app/id${APP_ID}`, de: `https://apps.apple.com/de/app/weave-workout-stories/id${APP_ID}` };
+
+function checkAppStore(pagesByFile) {
+  for (const loaded of pagesByFile.values()) {
+    const expected = APP_STORE_URL[languageOf(loaded.page)];
+    for (const reference of referencesOf(loaded).filter((reference) => /apps\.apple\.com/.test(reference))) {
+      if (reference !== expected) fail(loaded.page, 'app store', `App Store link ${reference}, expected ${expected}`);
+    }
+    for (const tag of loaded.tags.filter((tag) => tag.name === 'meta' && tag.attributes.name === 'apple-itunes-app')) {
+      if (tag.attributes.content !== `app-id=${APP_ID}`) fail(loaded.page, 'app store', `apple-itunes-app is "${tag.attributes.content}", expected "app-id=${APP_ID}"`);
+    }
+  }
+  for (const page of HOME_PAGES) {
+    const loaded = pagesByFile.get(page);
+    if (!loaded) continue;
+    const hero = stripScriptsAndComments(loaded.html).match(/<header\b[^>]*\bclass="[^"]*\bhero\b[^"]*"[^>]*>([\s\S]*?)<\/header>/i);
+    if (!hero || !hero[1].includes(`href="${APP_STORE_URL[languageOf(page)]}"`)) fail(page, 'app store', 'the hero has no link to the App Store listing');
+    if (!loaded.tags.some((tag) => tag.name === 'meta' && tag.attributes.name === 'apple-itunes-app')) fail(page, 'app store', 'missing <meta name="apple-itunes-app">');
+  }
 }
 
 function checkStructuredData() {
@@ -917,6 +944,7 @@ function main() {
   checkIndexStructure(pagesByFile);
   checkRedirect();
   checkStructuredData();
+  checkAppStore(pagesByFile);
   checkFaq();
   checkAppTitles(pagesByFile);
   report();
