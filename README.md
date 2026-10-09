@@ -4,8 +4,8 @@ Marketing site + privacy policy for the Weave iOS app. Plain HTML/CSS, no build 
 
 ## Structure
 
-- `index.html` — landing page (animated headline, screenshot strip, TestFlight beta signup, features, Pro)
-- `privacy.html` — privacy policy (linked from the App Store listing and the beta form)
+- `index.html` — landing page (animated headline, App Store button, screenshot strip, features, download band, FAQ)
+- `privacy.html` — privacy policy (linked from the App Store listing)
 - `support.html` — support page (linked from the App Store listing)
 - `share-workout-instagram.html` — guide: sharing an Apple Watch workout on Instagram (see [Guides](#guides))
 - `merge-workouts.html` — guide: merging finished Apple Watch workouts into one Recap card
@@ -48,7 +48,9 @@ node scripts/check-site.mjs
 
 It exits non-zero and prints `FAIL <page> [<check>] <reason>` for each problem. It checks that every local or same-domain `href`/`src`/`<meta content>` URL (including `#anchor` targets) resolves; every page has an English/German twin with a matching canonical and `og:url`, reciprocal `hreflang` alternates and a language switch that leads to the twin (with `?lang=en` when it leads to the redirecting root); `sitemap.xml` and the pages agree; both index pages have the same ids, `<section>`s and `.card` blocks; no internal link targets `index.html` (link to the directory instead); `404.html` is `noindex`, uses only root-absolute URLs and links to both home pages (it has no twin and must not be listed in `sitemap.xml`); and the root redirect script, run as-is against stubbed browsers, sends only German-first browsers to `de/` and respects `?lang=en` and a stored choice.
 
-Structured data: each home page must carry exactly one JSON-LD block that parses, describes a `MobileApplication` (name, description, iOS, category, the page's own URL and language, publisher with email, no ratings), and prices every offer in the page's currency (USD on English, EUR on German), with the "Weave Pro" offer equal to the price shown in the Pro band. Change the visible price and the JSON-LD together.
+Structured data: each home page must carry exactly one JSON-LD block that parses, describes a `MobileApplication` (name, description, iOS, category, the page's own URL and language, publisher with email, no ratings), and prices every offer in the page's currency (USD on English, EUR on German). Weave is a free download with Weave Pro as a one-time in-app purchase (no subscription); the site states no Pro price, so the only offer is "Weave" at `0` and no page shows a price. If a page ever shows one (`.amount`), it needs exactly one "Weave Pro" offer at that same price. Change the visible price and the JSON-LD together.
+
+App Store: the app is live as "Weave – Workout Stories" (App ID `6798253561`). English pages link to `https://apps.apple.com/app/id6798253561`, German pages to `https://apps.apple.com/de/app/weave-workout-stories/id6798253561`; the check fails on any other `apps.apple.com` link. Both home pages need the App Store button inside the hero (the German radio spot from 2026-10-19 sends phone users to the home page, so it must be on the first screen) and the Smart App Banner tag `<meta name="apple-itunes-app" content="app-id=6798253561">`, which the guides and support pages carry too.
 
 FAQ: both home pages must have a visible `#faq` section (one `.faq-item` per question: an `<h3>` question, then `<p>` answer) with 5 to 7 questions, a `FAQPage` node in that same JSON-LD block with the same questions and answers in the same order, and the same number of questions in English and German. Edit the visible text and the JSON-LD together. The two are compared as the text a reader sees: inline markup (`<strong>Metric</strong>: distance`) and entities (`&rsquo;`) count as the characters they show, so the JSON-LD holds the same words without the tags.
 
@@ -87,12 +89,12 @@ Add `loading="lazy" decoding="async"` to the `<img>` when it sits below the firs
 
 ## Status
 
-Live at `https://workoutstories.app` via GitHub Pages, HTTPS enforced (Let's Encrypt certificate issued and renewed by GitHub). DNS at Namecheap: four `A` and four `AAAA` records on `@` for GitHub Pages, `www` a `CNAME` to `hoelzlm.github.io`. Moved from `weave.rinnebuehl.de` on 2026-09-30; that host is a Namecheap URL redirect (301, HTTP only) to the home page, so old deep links land on `/`. Beta signup form posts to Formspree (`mppazblp`).
+Live at `https://workoutstories.app` via GitHub Pages, HTTPS enforced (Let's Encrypt certificate issued and renewed by GitHub). DNS at Namecheap: four `A` and four `AAAA` records on `@` for GitHub Pages, `www` a `CNAME` to `hoelzlm.github.io`. Moved from `weave.rinnebuehl.de` on 2026-09-30; that host is a Namecheap URL redirect (301, HTTP only) to the home page, so old deep links land on `/`. The pre-launch beta signup form (Formspree `mppazblp`) was removed at the App Store launch.
 
 ## Outlook — what's next
 
-- **Swap the TestFlight CTA for the real App Store link** once the listing is live: replace the `#beta` hero button and retire the beta-signup section (or repurpose it as a "you're in" confirmation) in `index.html` and drop the matching paragraph in `privacy.html`.
-- **Verify the Formspree flow end-to-end**: submit a real address on the production site and confirm the notification arrives at the configured destination before pointing any traffic at the beta.
+- **Use Apple's official "Download on the App Store" badge** (English and German, from Apple's marketing tools) in place of the text buttons, once the SVGs are added to `assets/`.
+- **Decide what happens to the beta email list** collected through Formspree (`mppazblp`) before launch; the privacy pages describe it as closed, with removal on request.
 
 ## SEO
 
