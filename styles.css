@@ -187,22 +187,17 @@ img { max-width: 100%; height: auto; display: block; }
   background: var(--bg-elevated);
 }
 
-.btn[aria-disabled="true"] {
-  opacity: 0.55;
-  cursor: default;
-  pointer-events: none;
+/* App Store button: the hero's main call to action */
+.btn-store {
+  padding: 15px 30px;
+  font-size: 16px;
+  font-weight: 700;
 }
 
-.badge-soon {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  background: rgba(6, 7, 10, 0.4);
-  color: #06070a;
-  padding: 3px 8px;
-  border-radius: 6px;
-  margin-left: 4px;
+.cta-note {
+  color: var(--text-dim);
+  font-size: 0.88rem;
+  margin: 14px 0 0;
 }
 
 /* Screenshot strip */
@@ -234,66 +229,6 @@ img { max-width: 100%; height: auto; display: block; }
 @media (max-width: 640px) {
   .shots img { height: 380px; }
 }
-
-/* Beta signup */
-.beta-section {
-  background: var(--bg-elevated);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-
-.beta-inner {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-.beta-inner .section-head { margin-bottom: 30px; }
-
-.beta-form {
-  display: flex;
-  align-items: end;
-  gap: 12px;
-  flex-wrap: wrap;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.form-field {
-  flex: 1 1 260px;
-}
-
-.form-field label {
-  display: block;
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-bottom: 7px;
-}
-
-.form-field input {
-  width: 100%;
-  padding: 13px 14px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--bg-card);
-  color: var(--text);
-  font: inherit;
-}
-
-.form-field input:focus {
-  outline: 2px solid var(--blue);
-  outline-offset: 2px;
-}
-
-.beta-form .btn { flex: 0 0 auto; }
-
-.form-note {
-  flex-basis: 100%;
-  color: var(--text-dim);
-  font-size: 0.82rem;
-  margin: 2px 0 0;
-}
-
-.form-note a { color: var(--text); }
 
 /* Sections */
 section { padding: 72px 24px; }
@@ -413,18 +348,14 @@ section { padding: 72px 24px; }
 }
 .pro-list li::before { content: "\2713  "; color: var(--green); font-weight: 700; }
 
-.price-tag {
+.download-cta {
   text-align: center;
   flex: 0 0 auto;
 }
-.price-tag .amount {
-  font-size: 3rem;
-  font-weight: 800;
-  line-height: 1;
-}
-.price-tag .note {
+.download-cta .note {
   font-size: 0.82rem;
   color: var(--text-dim);
+  margin-top: 10px;
 }
 
 /* Footer */
@@ -452,8 +383,20 @@ footer {
 .footer-links a { text-decoration: none; color: var(--text-dim); }
 .footer-links a:hover { color: var(--text); }
 
+/* Phones: keep the App Store button on the first screen (radio listeners land here on a phone) */
 @media (max-width: 640px) {
-  .beta-form .btn { width: 100%; justify-content: center; }
+  .hero { padding: 28px 20px 32px; }
+  .hero-logo { width: 72px; height: 72px; border-radius: 16px; margin-bottom: 20px; }
+  .hero p.lede { margin-bottom: 24px; }
+  .cta-row .btn-store { width: 100%; max-width: 360px; justify-content: center; }
+  .download-cta { width: 100%; }
+  .download-cta .btn-store { width: 100%; justify-content: center; }
+}
+
+/* Small phones: the nav already shows the logo, so drop the hero copy of it to lift the button */
+@media (max-width: 480px) {
+  .hero { padding-top: 16px; }
+  .hero-logo { display: none; }
 }
 
 /* Privacy page */
@@ -531,7 +474,6 @@ footer {
 }
 
 .doc h1 { hyphens: auto; overflow-wrap: break-word; }
-.price-tag .amount { font-size: clamp(2rem, 9vw, 3rem); }
 
 /* FAQ */
 .faq-list {
