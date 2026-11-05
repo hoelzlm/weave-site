@@ -139,17 +139,19 @@
   </nav>
 
   <header class="hero">
-    <picture>
-      <source srcset="../assets/logo.webp" type="image/webp">
-      <img class="hero-logo" src="../assets/logo.png" width="192" height="192" alt="Weave App-Icon">
-    </picture>
-    <h1>Führe <span class="workout-word" data-fit><span class="word-viewport" aria-hidden="true"><span class="word-track"><span data-word="Läufe"></span><span data-word="Radtouren"></span><span data-word="Wanderungen"></span><span data-word="Spaziergänge"></span><span data-word="Läufe"></span></span></span><span class="sr-only">Läufe</span></span> zusammen. <br>Teile <span class="gradient-text">Routenkarten</span>, die auffallen.</h1>
-    <p class="lede">Weave macht aus deinen Apple Watch Workouts gestaltete, Social-Media-taugliche Karten — Routenkarte, Tempo, Distanz, Zwischenzeiten. Keine Screenshots. Kein Strava-Konto.</p>
+    <div class="hero-copy">
+    <h1>Führe <span class="workout-word" data-fit><span class="word-viewport" aria-hidden="true"><span class="word-track"><span data-word="Läufe"></span><span data-word="Radtouren"></span><span data-word="Wanderungen"></span><span data-word="Spaziergänge"></span><span data-word="Läufe"></span></span></span><span class="sr-only">Läufe</span></span> zusammen, <br>teile <span class="accent-text">Routenkarten</span>, die auffallen</h1>
+    <p class="lede">Weave macht aus deinen Apple Watch Workouts gestaltete, teilbare Karten: Routenkarte, Tempo, Distanz, Zwischenzeiten. Keine Screenshots, kein Strava-Konto.</p>
     <div class="cta-row">
       <a class="btn btn-primary btn-store" href="https://apps.apple.com/de/app/weave-workout-stories/id6798253561"> Im App Store herunterladen</a>
       <a class="btn btn-secondary" href="#features">Funktionen ansehen</a>
     </div>
     <p class="cta-note">Kostenlos herunterladen · Kein Konto nötig</p>
+  </div>
+    <picture class="hero-shot">
+      <source srcset="../assets/screenshots/de/screen-4.webp" type="image/webp">
+      <img src="../assets/screenshots/de/screen-4.png" width="600" height="1301" fetchpriority="high" alt="Weave Export einer Laufkarte mit der Route als Vektorlinie">
+    </picture>
   </header>
 
   <div class="shots">
@@ -165,10 +167,6 @@
       <source srcset="../assets/screenshots/de/screen-3.webp" type="image/webp">
       <img src="../assets/screenshots/de/screen-3.png" width="600" height="1301" fetchpriority="low" alt="Weave Karteneditor mit den Vorlagen und einer Routenkarte aus drei Läufen">
     </picture>
-    <picture>
-      <source srcset="../assets/screenshots/de/screen-4.webp" type="image/webp">
-      <img src="../assets/screenshots/de/screen-4.png" width="600" height="1301" fetchpriority="low" alt="Weave Export einer Laufkarte mit der Route als Vektorlinie">
-    </picture>
   </div>
 
   <section id="features">
@@ -180,32 +178,32 @@
     <div class="grid">
       <div class="card wide">
         <div class="card-copy">
-          <div class="icon">⌘</div>
+          <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg></div>
           <h3>Mehrere Workouts zu einer Karte zusammenführen</h3>
-          <p>Wähle zwei oder mehr Workouts derselben Sportart — einen Trainingsblock, ein Rennwochenende, eine Woche voller Radtouren — und fasse sie zu einer Recap-Karte mit gemeinsamen Werten und einer zusammengeführten Route zusammen. Deine eigene Recap-Karte aus mehreren Workouts – mit wenigen Fingertipps. <a href="merge-workouts.html">So führst du Workouts zusammen →</a></p>
+          <p>Wähle zwei oder mehr Workouts derselben Sportart (einen Trainingsblock, ein Rennwochenende, eine Woche voller Radtouren) und fasse sie in wenigen Fingertipps zu einer Recap-Karte mit gemeinsamen Werten und einer zusammengeführten Route zusammen. <a href="merge-workouts.html">So führst du Workouts zusammen →</a></p>
         </div>
         <picture>
           <source srcset="../assets/screenshots/de/screen-1.webp" type="image/webp">
           <img src="../assets/screenshots/de/screen-1.png" width="600" height="1301" loading="lazy" decoding="async" alt="Drei Läufe zum Zusammenführen auswählen">
         </picture>
       </div>
-      <div class="card">
-        <div class="icon">▦</div>
+      <div class="card s4">
+        <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></div>
         <h3>Fünf Kartenvorlagen</h3>
-        <p>Clean, Bold, Route First, Recap und Lift — wähle den Look, der zu deinem Workout und deinem Feed passt. Lift ist für Krafttraining gemacht, Recap für die Werte zusammengeführter Workouts.</p>
+        <p>Clean, Bold, Route First, Recap und Lift. Wähle den Look, der zu deinem Workout und deinem Feed passt. Lift ist für Krafttraining gemacht, Recap für die Werte zusammengeführter Workouts.</p>
       </div>
-      <div class="card">
-        <div class="icon">✂</div>
+      <div class="card s2">
+        <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12"/><path d="M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/></svg></div>
         <h3>Karten oder transparente Sticker</h3>
         <p>Exportiere eine vollständige Karte oder einen transparenten Sticker, den du in dein eigenes Instagram-Story-Design legst. <a href="share-workout-instagram.html">So teilst du ein Workout auf Instagram →</a></p>
       </div>
-      <div class="card">
-        <div class="icon">〰</div>
+      <div class="card s2">
+        <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg></div>
         <h3>Route als Vektorlinie</h3>
-        <p>Zeichne deine Route als klare Linie statt als Karten-Screenshot — schneller gerendert und ideal für einen minimalistischen Look.</p>
+        <p>Zeichne deine Route als klare Linie statt als Karten-Screenshot, schneller gerendert und ideal für einen minimalistischen Look.</p>
       </div>
-      <div class="card">
-        <div class="icon">🔒</div>
+      <div class="card s4">
+        <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
         <h3>Immer auf dem Gerät</h3>
         <p>Kein Konto, kein verknüpftes soziales Netzwerk, kein Backend-Server. Deine Workout-Daten verlassen dein iPhone nie. <a href="privacy.html">Zur Datenschutzerklärung →</a></p>
       </div>

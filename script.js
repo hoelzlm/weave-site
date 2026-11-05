@@ -19,7 +19,7 @@ if (workoutWord) {
 
   const setWord = (index) => {
     wordIndex = index;
-    wordTrack.style.transform = `translateY(calc(0.14em - ${index * 1.35}em))`;
+    wordTrack.style.transform = `translateY(calc(0.26em - ${index * 1.35}em))`;
     fitWidth(index);
   };
 

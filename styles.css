@@ -1,14 +1,27 @@
+/* Geist, self-hosted (SIL OFL 1.1, see assets/fonts/OFL.txt). No third-party font requests. */
+@font-face {
+  font-family: "Geist";
+  src: url("assets/fonts/geist-latin-wght-normal.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  --bg: #08090d;
-  --bg-elevated: #101219;
-  --bg-card: #14161e;
-  --border: #23262f;
-  --text: #f2f3f5;
-  --text-dim: #9a9ea8;
-  --blue: #35c1f0;
-  --green: #d7ff3d;
-  --gradient: linear-gradient(120deg, var(--blue), var(--green));
+  /* Ink ramp: night-run neutrals, tinted very slightly cool */
+  --bg: #0b0d14;
+  --bg-deep: #07080d;
+  --bg-card: #11141c;
+  --bg-raised: #1a1e28;
+  --border: rgba(238, 240, 245, 0.08);
+  --text: #eef0f5;
+  --text-dim: #a3a9b8;
+  --text-muted: #7a8296;
+  /* One accent, from the app's own Night Run colour. Dark text sits on it (about 16:1). */
+  --accent: #d7ff3d;
   --max-width: 1080px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --route: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='10' viewBox='0 0 28 10' fill='none'%3E%3Cpath d='M1 8 C6 8 6 2 11 2 S16 8 21 8' stroke='%23d7ff3d' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='25' cy='8' r='2' fill='%23d7ff3d'/%3E%3C/svg%3E");
 }
 
 * { box-sizing: border-box; }
@@ -19,14 +32,24 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  font-family: "Geist", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
 a { color: inherit; }
 
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
 img { max-width: 100%; height: auto; display: block; }
+
+h1, h2, h3 { font-weight: 500; }
 
 .wrap {
   max-width: var(--max-width);
@@ -34,89 +57,111 @@ img { max-width: 100%; height: auto; display: block; }
   padding: 0 24px;
 }
 
-/* Nav */
+/* Nav: logo, links, one button */
 .nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px;
-  max-width: var(--max-width);
+  gap: 12px;
+  padding: 16px 24px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
 .nav-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-weight: 700;
+  gap: 8px;
+  flex-shrink: 0;
+  font-weight: 500;
   font-size: 18px;
+  line-height: 1;
   text-decoration: none;
 }
 
-.nav-brand img { width: 30px; height: 30px; border-radius: 7px; }
+.nav-brand img { width: 28px; height: 28px; border-radius: 8px; }
 
 .nav-links {
   display: flex;
-  gap: 28px;
-  font-size: 15px;
+  align-items: center;
+  gap: 24px;
+  font-size: 14px;
   color: var(--text-dim);
+  white-space: nowrap;
 }
 
-.nav-links a { text-decoration: none; }
+.nav-links a { text-decoration: none; transition: color 150ms var(--ease); }
 .nav-links a:hover { color: var(--text); }
 
-/* Hero */
+/* The App Store link is the page's one nav button */
+.nav-links a[href*="apps.apple.com"] {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 8px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  font-weight: 500;
+}
+.nav-links a[href*="apps.apple.com"]:hover { background: #222736; }
+
+/* Language switch: a quiet text link */
+.lang-switch { color: var(--text-muted); }
+
+/* Hero: text on the left, the real exported card on the right */
 .hero {
-  text-align: center;
-  padding: 56px 24px 40px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 64px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 64px 24px 96px;
 }
 
-.hero-logo {
-  width: 96px;
-  height: 96px;
-  border-radius: 22px;
-  margin: 0 auto 28px;
-  box-shadow: 0 0 60px -10px rgba(53, 193, 240, 0.35);
-}
+.hero-copy { max-width: 640px; }
 
 .hero h1 {
-  font-size: clamp(2.2rem, 5vw, 3.4rem);
-  line-height: 1.08;
-  margin: 0 0 18px;
-  letter-spacing: -0.02em;
+  font-size: clamp(2.5rem, 5vw, 3.75rem);
+  line-height: 1.04;
+  margin: 0 0 24px;
+  letter-spacing: -0.03em;
 }
 
 .workout-word {
   display: inline-block;
   position: relative;
   width: 5ch;
-  height: 1.08em;
-  line-height: 1.08;
+  height: 1.04em;
+  line-height: 1.04;
   text-align: left;
   vertical-align: baseline;
 }
 
 .word-viewport {
   position: absolute;
-  top: 0;
+  top: -0.12em;
   left: 0;
   width: 100%;
-  height: 1.35em;
-  line-height: 1.08;
+  height: 1.47em;
+  line-height: 1.04;
   overflow: hidden;
 }
 
 .word-track {
   display: flex;
   flex-direction: column;
-  transform: translateY(0.14em);
-  transition: transform 0.55s cubic-bezier(0.65, 0, 0.35, 1);
+  transform: translateY(0.26em);
+  transition: transform 500ms var(--ease);
 }
 
 .word-track span {
   display: block;
   height: 1.35em;
-  line-height: 1.08;
+  line-height: 1.04;
 }
 
 /* The rotating words are drawn from data-word, so the heading's text (what crawlers index and screen
@@ -135,78 +180,90 @@ img { max-width: 100%; height: auto; display: block; }
   border: 0;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .word-track { transition: none; }
-}
-
-.hero .gradient-text {
-  background: var(--gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
+/* The accent carries one phrase of the headline, no gradient */
+.hero .accent-text { color: var(--accent); }
 
 .hero p.lede {
-  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  font-size: 1.1875rem;
+  line-height: 1.5;
   color: var(--text-dim);
-  max-width: 560px;
-  margin: 0 auto 34px;
+  max-width: 36rem;
+  margin: 0 0 32px;
 }
 
 .cta-row {
   display: flex;
-  justify-content: center;
-  gap: 14px;
+  justify-content: flex-start;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
 .btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  padding: 13px 26px;
-  border-radius: 12px;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 10px;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 500;
   text-decoration: none;
   border: 1px solid var(--border);
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  transition: background-color 150ms var(--ease), border-color 150ms var(--ease), transform 150ms var(--ease);
 }
 
-.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: scale(0.98); }
 
 .btn-primary {
-  background: var(--gradient);
-  color: #06070a;
-  border: none;
+  background: var(--accent);
+  color: #0b0d14;
+  border-color: transparent;
 }
+.btn-primary:hover { background: #e3ff6e; }
 
 .btn-secondary {
   color: var(--text);
-  border-color: var(--border);
-  background: var(--bg-elevated);
+  background: var(--bg-raised);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
+.btn-secondary:hover { background: #222736; }
 
 /* App Store button: the hero's main call to action */
 .btn-store {
-  padding: 15px 30px;
+  height: 48px;
+  padding: 0 24px;
   font-size: 16px;
-  font-weight: 700;
 }
 
 .cta-note {
-  color: var(--text-dim);
-  font-size: 0.88rem;
-  margin: 14px 0 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin: 16px 0 0;
 }
 
-/* Screenshot strip */
+.hero-shot img {
+  height: 600px;
+  width: auto;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+}
+
+/* One entrance on load: a short fade and rise */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+.hero-copy { animation: rise 450ms var(--ease) both; }
+.hero-shot { animation: rise 450ms var(--ease) 80ms both; }
+
+/* How it works: the app's own screens */
 .shots {
   display: flex;
-  justify-content: center;
-  gap: 20px;
+  justify-content: safe center;
+  gap: 24px;
   overflow-x: auto;
-  padding: 40px 24px 8px;
+  padding: 0 24px 32px;
   scroll-snap-type: x mandatory;
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -226,88 +283,117 @@ img { max-width: 100%; height: auto; display: block; }
   border: 1px solid var(--border);
 }
 
-@media (max-width: 640px) {
-  .shots img { height: 380px; }
-}
-
 /* Sections */
-section { padding: 72px 24px; }
+section { padding: 96px 24px; }
 
 .section-head {
-  text-align: center;
-  max-width: 640px;
-  margin: 0 auto 48px;
+  max-width: var(--max-width);
+  margin: 0 auto 40px;
 }
 
-.section-head .eyebrow {
-  display: inline-block;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--blue);
-  margin-bottom: 12px;
+/* Signature: a short route line with an endpoint, in front of each section label */
+.eyebrow,
+.doc.guide .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+.eyebrow::before {
+  content: "";
+  width: 28px;
+  height: 10px;
+  background: var(--route) no-repeat center / contain;
 }
 
 .section-head h2 {
-  font-size: clamp(1.6rem, 3.5vw, 2.3rem);
-  margin: 0 0 14px;
-  letter-spacing: -0.01em;
+  font-size: clamp(1.75rem, 3.6vw, 2.5rem);
+  line-height: 1.12;
+  margin: 0 0 16px;
+  max-width: 22ch;
+  letter-spacing: -0.02em;
 }
 
 .section-head p {
   color: var(--text-dim);
-  font-size: 1.05rem;
+  font-size: 1.0625rem;
+  max-width: 36rem;
   margin: 0;
 }
 
-/* Feature grid */
+/* Feature grid: rhythm of wide, 4/2 and 3/3 rows */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
   max-width: var(--max-width);
   margin: 0 auto;
 }
 
 .card {
+  grid-column: span 3;
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 28px 24px;
+  border-radius: 16px;
+  padding: 24px;
 }
 
+.card.s4 { grid-column: span 4; }
+.card.s2 { grid-column: span 2; }
+
 .card .icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 11px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--gradient);
-  font-size: 19px;
-  margin-bottom: 18px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  margin-bottom: 20px;
+}
+
+.card .icon svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .card h3 {
-  font-size: 1.08rem;
+  font-size: 1.125rem;
+  line-height: 1.3;
   margin: 0 0 8px;
 }
 
 .card p {
   color: var(--text-dim);
-  font-size: 0.94rem;
+  font-size: 0.9375rem;
   margin: 0;
 }
+
+.card a { text-underline-offset: 3px; text-decoration-color: rgba(238, 240, 245, 0.3); }
+.card a:hover { text-decoration-color: var(--accent); }
 
 .card.wide {
   grid-column: 1 / -1;
   display: flex;
   align-items: center;
-  gap: 36px;
+  gap: 48px;
   flex-wrap: wrap;
+  padding: 32px;
 }
 
+.card.wide h3 { font-size: 1.5rem; line-height: 1.2; letter-spacing: -0.01em; }
+.card.wide p { font-size: 1rem; }
 .card.wide .card-copy { flex: 1 1 280px; }
 .card.wide > picture { flex: 0 0 auto; }
 .card.wide img {
@@ -319,7 +405,7 @@ section { padding: 72px 24px; }
 
 /* Pro band */
 .pro-band {
-  background: var(--bg-elevated);
+  background: var(--bg-card);
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
 }
@@ -330,39 +416,53 @@ section { padding: 72px 24px; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 32px;
+  gap: 48px;
   flex-wrap: wrap;
 }
 
-.pro-inner h2 { margin: 0 0 10px; font-size: 1.7rem; }
+.pro-inner h2 { margin: 0 0 12px; font-size: 2rem; letter-spacing: -0.02em; }
 .pro-inner p { color: var(--text-dim); margin: 0; max-width: 480px; }
 .pro-list {
   list-style: none;
   padding: 0;
-  margin: 18px 0 0;
+  margin: 24px 0 0;
   display: grid;
   grid-template-columns: repeat(2, auto);
-  gap: 8px 28px;
+  gap: 8px 32px;
   color: var(--text-dim);
-  font-size: 0.92rem;
+  font-size: 0.9375rem;
 }
-.pro-list li::before { content: "\2713  "; color: var(--green); font-weight: 700; }
+.pro-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pro-list li::before {
+  content: "";
+  flex: none;
+  width: 16px;
+  height: 16px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237a8296' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") no-repeat center / contain;
+}
 
 .download-cta {
   text-align: center;
   flex: 0 0 auto;
 }
 .download-cta .amount {
-  font-size: clamp(2rem, 9vw, 3rem);
-  font-weight: 800;
+  font-size: clamp(2.25rem, 9vw, 3rem);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
   line-height: 1;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 .download-cta .note {
-  font-size: 0.82rem;
-  color: var(--text-dim);
-  margin-top: 10px;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin: 0 0 20px;
 }
+.download-cta .note:last-child { margin: 12px 0 0; }
 
 /* Footer */
 footer {
@@ -378,54 +478,43 @@ footer {
   align-items: center;
   flex-wrap: wrap;
   gap: 16px;
-  color: var(--text-dim);
-  font-size: 0.88rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
 }
 
 .footer-links {
   display: flex;
-  gap: 24px;
+  flex-wrap: wrap;
+  gap: 10px 24px;
 }
-.footer-links a { text-decoration: none; color: var(--text-dim); }
+.footer-links a { text-decoration: none; color: var(--text-dim); transition: color 150ms var(--ease); }
 .footer-links a:hover { color: var(--text); }
 
-/* Phones: keep the App Store button on the first screen (radio listeners land here on a phone) */
-@media (max-width: 640px) {
-  .hero { padding: 28px 20px 32px; }
-  .hero-logo { width: 72px; height: 72px; border-radius: 16px; margin-bottom: 20px; }
-  .hero p.lede { margin-bottom: 24px; }
-  .cta-row .btn-store { width: 100%; max-width: 360px; justify-content: center; }
-  .download-cta { width: 100%; }
-  .download-cta .btn-store { width: 100%; justify-content: center; }
-}
-
-/* Small phones: the nav already shows the logo, so drop the hero copy of it to lift the button */
-@media (max-width: 480px) {
-  .hero { padding-top: 16px; }
-  .hero-logo { display: none; }
-}
-
-/* Privacy page */
+/* Privacy page and guides */
 .doc {
   max-width: 720px;
   margin: 0 auto;
-  padding: 56px 24px 90px;
+  padding: 64px 24px 96px;
 }
 
 .doc h1 {
-  font-size: clamp(1.8rem, 4vw, 2.4rem);
-  margin-bottom: 6px;
+  font-size: clamp(2rem, 4.4vw, 2.75rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+  hyphens: auto;
+  overflow-wrap: break-word;
 }
 
 .doc .updated {
-  color: var(--text-dim);
-  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
   margin-bottom: 40px;
 }
 
 .doc h2 {
   font-size: 1.25rem;
-  margin: 40px 0 12px;
+  margin: 48px 0 12px;
   color: var(--text);
 }
 
@@ -434,104 +523,26 @@ footer {
   font-size: 1rem;
 }
 
-.doc ul { padding-left: 22px; }
+.doc ul, .doc ol { padding-left: 24px; }
 .doc li { margin-bottom: 8px; }
+.doc strong { color: var(--text); font-weight: 500; }
+.doc a { color: var(--text); text-underline-offset: 3px; text-decoration-color: rgba(238, 240, 245, 0.3); }
+.doc a:hover { text-decoration-color: var(--accent); }
 
 .doc .callout {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-left: 3px solid var(--green);
-  border-radius: 10px;
-  padding: 18px 20px;
+  border-left: 2px solid var(--accent);
+  border-radius: 12px;
+  padding: 16px 20px;
   margin: 24px 0;
 }
 .doc .callout p { color: var(--text); margin: 0; }
 
-/* Language switch */
-.lang-switch {
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 2px 10px;
-  font-size: 13px;
-}
-
-/* Word cycle that resizes to the current word (German words vary widely in length) */
-.workout-word[data-fit] {
-  width: 6ch; /* fallback until script.js measures the current word */
-  transition: width 0.55s cubic-bezier(0.65, 0, 0.35, 1);
-}
-
-.workout-word[data-fit] .word-track span { white-space: nowrap; width: max-content; }
-
-@media (prefers-reduced-motion: reduce) {
-  .workout-word[data-fit] { transition: none; }
-}
-
-@media (max-width: 480px) {
-  .nav { padding: 16px; }
-  .nav-links { gap: 14px; font-size: 14px; }
-  .nav-links a[href$="#features"] { display: none; }
-  .pro-list { grid-template-columns: 1fr; }
-}
-
-/* Long German words would otherwise re-wrap the headline every cycle on narrow phones */
-@media (max-width: 400px) {
-  .workout-word[data-fit] { display: block; margin: 0 auto; }
-}
-
-.doc h1 { hyphens: auto; overflow-wrap: break-word; }
-
-/* FAQ */
-.faq-list {
-  max-width: 760px;
-  margin: 0 auto;
-  display: grid;
-  gap: 14px;
-}
-
-.faq-item {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 22px 24px;
-}
-
-.faq-item h3 {
-  font-size: 1.05rem;
-  margin: 0 0 8px;
-}
-
-.faq-item p {
-  color: var(--text-dim);
-  font-size: 0.95rem;
-  margin: 0;
-}
-
-@media (max-width: 400px) {
-  .faq-item { padding: 18px; }
-}
-
-/* Guide pages: a .doc page split into <section>s, one per method, so images below the first one load lazily */
-.footer-links { flex-wrap: wrap; row-gap: 10px; }
-
 .doc.guide section { padding: 0; }
-
-.doc.guide .eyebrow {
-  display: inline-block;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--blue);
-}
-
 .doc.guide h1 { margin-top: 8px; hyphens: manual; }
 
-.doc ol { padding-left: 22px; }
-.doc strong { color: var(--text); }
-.doc a { color: var(--text); }
-
-.guide-shot { display: block; margin: 28px 0; }
+.guide-shot { display: block; margin: 32px 0; }
 
 .guide-shot img {
   height: 480px;
@@ -541,24 +552,100 @@ footer {
   border: 1px solid var(--border);
 }
 
-@media (max-width: 640px) {
-  .guide-shot img { height: 380px; }
-}
-
 .doc .guide-next {
   margin-top: 48px;
   padding-top: 24px;
   border-top: 1px solid var(--border);
 }
 
-/* Narrow phones (320 px): the German nav ("Datenschutz", "English") would otherwise run into the brand */
-.nav { gap: 12px; }
-.nav-brand { flex-shrink: 0; }
-.nav-links { white-space: nowrap; }
+/* Word cycle that resizes to the current word (German words vary widely in length) */
+.workout-word[data-fit] {
+  width: 6ch; /* fallback until script.js measures the current word */
+  transition: width 500ms var(--ease);
+}
 
+.workout-word[data-fit] .word-track span { white-space: nowrap; width: max-content; }
+
+/* FAQ */
+.faq-list {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.faq-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.faq-item h3 {
+  font-size: 1.0625rem;
+  line-height: 1.35;
+  margin: 0 0 8px;
+}
+
+.faq-item p {
+  color: var(--text-dim);
+  font-size: 0.9375rem;
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .word-track,
+  .workout-word[data-fit] { transition: none; }
+  .hero-copy, .hero-shot { animation: none; }
+  html { scroll-behavior: auto; }
+}
+
+/* Tablets and below: stack the hero in reading order, text first */
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 48px;
+    padding: 48px 24px 64px;
+  }
+  .hero-shot img { height: 520px; margin: 0 auto; }
+  .card, .card.s4, .card.s2 { grid-column: 1 / -1; }
+  .faq-list { grid-template-columns: 1fr; }
+  section { padding: 72px 24px; }
+}
+
+/* Phones: keep the App Store button on the first screen (radio listeners land here on a phone) */
+@media (max-width: 640px) {
+  .hero { padding: 32px 20px 56px; gap: 40px; }
+  .hero h1 { font-size: clamp(2.25rem, 10vw, 2.75rem); margin-bottom: 16px; }
+  .hero p.lede { font-size: 1.0625rem; margin-bottom: 24px; }
+  .cta-row .btn-store { width: 100%; justify-content: center; }
+  .hero-shot img { height: 440px; }
+  .shots img { height: 380px; }
+  .guide-shot img { height: 380px; }
+  .card.wide { padding: 24px; gap: 32px; }
+  .card.wide img { height: 380px; }
+  .download-cta { width: 100%; }
+  .download-cta .btn-store { width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .nav { padding: 16px; }
+  .nav-links { gap: 14px; font-size: 14px; }
+  .nav-links a[href$="#features"] { display: none; }
+  .pro-list { grid-template-columns: 1fr; }
+  .faq-item { padding: 20px; }
+  .hero { padding-top: 24px; }
+}
+
+/* Narrow phones (320 px): the German nav ("Datenschutz", "English") would otherwise run into the brand */
 @media (max-width: 360px) {
   .nav { padding: 16px 12px; }
-  .nav-brand { gap: 8px; }
   .nav-links { gap: 10px; }
-  .lang-switch { padding: 2px 8px; }
+  .nav-links a[href*="apps.apple.com"] { padding: 0 10px; }
+}
+
+/* Long German words would otherwise re-wrap the headline every cycle on narrow phones */
+@media (max-width: 400px) {
+  html[lang="de"] .workout-word[data-fit] { display: block; margin: 0; }
 }
