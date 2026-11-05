@@ -281,7 +281,7 @@ h1, h2, h3 { font-weight: 500; }
   background: var(--bg-raised);
   color: var(--text);
 }
-.card-img { margin: -8px -8px 16px; height: 220px; overflow: hidden; border-radius: 10px; }
+.card-img { margin: -8px -8px 16px; aspect-ratio: 1; overflow: hidden; border-radius: 10px; }
 .card-img img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
 
 /* One entrance on load: a short fade and rise */
@@ -370,6 +370,7 @@ section { padding: 96px 24px; }
 
 .card.s4 { grid-column: span 4; }
 .card.s2 { grid-column: span 2; }
+.card.s4:last-child { align-self: start; }
 
 .card .icon {
   width: 36px;
@@ -654,7 +655,6 @@ footer {
   .fan { padding: 0 12px; margin-top: 40px; }
   .fan-card { width: 33%; }
   .fan-card.f2 { margin: 0 -16px; }
-  .card-img { height: 180px; }
   .guide-shot img { height: 380px; }
   .section-head { margin-bottom: 32px; }
   .section-head h2 { max-width: none; }
