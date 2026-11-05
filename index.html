@@ -161,35 +161,49 @@
 
   <header class="hero">
     <div class="hero-copy">
-    <h1>Merge <span class="workout-word" data-fit><span class="word-viewport" aria-hidden="true"><span class="word-track"><span data-word="runs,"></span><span data-word="cycles,"></span><span data-word="hikes,"></span><span data-word="walks,"></span><span data-word="runs,"></span></span></span><span class="sr-only">runs,</span></span> <br>share <span class="accent-text">route cards</span> worth posting</h1>
-    <p class="lede">Weave turns your Apple Watch workout data into designed, shareable cards: route map, pace, distance, splits. No screenshots, no Strava account.</p>
-    <div class="cta-row">
+      <h1>Didn't post it?<br><span class="accent-text">Didn't train.</span></h1>
+      <p class="hero-sub">Merge <span class="workout-word" data-fit><span class="word-viewport" aria-hidden="true"><span class="word-track"><span data-word="runs,"></span><span data-word="cycles,"></span><span data-word="hikes,"></span><span data-word="walks,"></span><span data-word="runs,"></span></span></span><span class="sr-only">runs,</span></span> share route cards worth posting.</p>
+      <p class="lede">Weave turns your Apple Watch workout data into designed, shareable cards: route map, pace, distance, splits. No screenshots, no Strava account.</p>
+      <div class="cta-row">
       <a class="btn btn-primary btn-store" href="https://apps.apple.com/app/id6798253561">Download on the App Store</a>
       <a class="btn btn-secondary" href="#features">See features</a>
     </div>
     <p class="cta-note">Free to download · No account needed</p>
-  </div>
-    <picture class="hero-shot">
-      <source srcset="assets/screenshots/screen-4.webp" type="image/webp">
-      <img src="assets/screenshots/screen-4.png" width="600" height="1301" fetchpriority="high" alt="Weave transparent sticker export of a route">
-    </picture>
+    </div>
+    <figure class="stage">
+      <div class="stage-phone">
+        <picture>
+          <source srcset="assets/screenshots/screen-1.webp" type="image/webp">
+          <img src="assets/screenshots/screen-1.png" width="600" height="1301" fetchpriority="high" alt="Three selected runs in Weave next to the finished recap card">
+        </picture>
+      </div>
+      <svg class="stage-route" viewBox="0 0 100 108" aria-hidden="true">
+        <path class="route-path" pathLength="1" d="M41 22 C52 22 49 8 60 8 S68 24 79 16 S90 4 97 15 S96 24 90 31"/>
+        <circle class="route-dot" cx="90" cy="31" r="1.4"/>
+      </svg>
+      <div class="stage-card">
+        <picture>
+          <source srcset="assets/cards/en-recap.webp" type="image/webp">
+          <img src="assets/cards/en-recap.webp" width="720" height="720" alt="Example recap card from three runs, 55.4 km">
+        </picture>
+      </div>
+      <figcaption>Example card</figcaption>
+    </figure>
   </header>
 
-  <div class="shots">
-    <picture>
-      <source srcset="assets/screenshots/screen-2.webp" type="image/webp">
-      <img src="assets/screenshots/screen-2.png" width="600" height="1301" loading="lazy" decoding="async" alt="Weave workout list with Merge tab">
-    </picture>
-    <picture>
-      <source srcset="assets/screenshots/screen-1.webp" type="image/webp">
-      <img src="assets/screenshots/screen-1.png" width="600" height="1301" loading="lazy" decoding="async" alt="Weave merge picker with three ride workouts selected">
-    </picture>
-    <picture>
-      <source srcset="assets/screenshots/screen-3.webp" type="image/webp">
-      <img src="assets/screenshots/screen-3.png" width="600" height="1301" loading="lazy" decoding="async" alt="Weave card editor showing four templates and a route map">
-    </picture>
-  </div>
-
+  <section class="band" id="band">
+    <div class="band-inner">
+      <h2 class="band-line">Sweat dries. The card stays.</h2>
+      <svg class="band-route" viewBox="0 0 600 24" preserveAspectRatio="none" aria-hidden="true"><path class="route-path" pathLength="1" d="M2 18 C60 18 70 4 130 4 S200 20 260 14 S330 2 400 8 S500 20 598 6"/></svg>
+      <p class="band-sub">A card from your workout before the shower is done.</p>
+    </div>
+    <div class="fan">
+      <figure class="fan-card f1"><img src="assets/cards/en-bold.webp" width="720" height="720" loading="lazy" decoding="async" alt="Example Bold card with a vector route, 42.2 km"></figure>
+      <figure class="fan-card f2"><img src="assets/cards/en-recap.webp" width="720" height="720" loading="lazy" decoding="async" alt="Example recap card from three runs, 55.4 km"></figure>
+      <figure class="fan-card f3"><img src="assets/cards/en-lift.webp" width="720" height="720" loading="lazy" decoding="async" alt="Example Lift card for strength training, 52:00"></figure>
+    </div>
+    <p class="fan-note">Example card</p>
+  </section>
   <section id="features">
     <div class="section-head">
       <span class="eyebrow">Features</span>
@@ -199,32 +213,28 @@
     <div class="grid">
       <div class="card wide">
         <div class="card-copy">
-          <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg></div>
-          <h3>Merge multiple workouts into one card</h3>
+          <span class="tag">Pro</span><h3>Merge multiple workouts into one card</h3>
           <p>Pick 2+ workouts of the same activity (a training block, a race weekend, a week of rides) and combine them into a single recap card with combined stats and a merged route, in a few taps. <a href="merge-workouts.html">How to merge workouts →</a></p>
         </div>
         <picture>
-          <source srcset="assets/screenshots/screen-1.webp" type="image/webp">
-          <img src="assets/screenshots/screen-1.png" width="600" height="1301" loading="lazy" decoding="async" alt="Selecting three ride workouts to merge">
+          <img src="assets/cards/en-recap.webp" width="720" height="720" loading="lazy" decoding="async" alt="Example recap card from three runs, 55.4 km">
         </picture>
       </div>
       <div class="card s4">
-        <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></div>
         <h3>Five card styles</h3>
-        <p>Clean, Bold, Route First, Recap and Lift. Pick the look that matches your workout and your feed. Lift is built for strength sessions, Recap for merged multi-workout stats.</p>
+        <p class="chips"><span>Clean</span><span>Bold</span><span>Route First</span><span>Recap</span><span>Lift</span></p>
+        <p>Pick the look that matches your workout and your feed. Lift is built for strength sessions, Recap for merged multi-workout stats.</p>
       </div>
       <div class="card s2">
-        <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12"/><path d="M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/></svg></div>
         <h3>Cards or transparent stickers</h3>
         <p>Export a full card, or a transparent sticker for layering into your own Instagram Story design. <a href="share-workout-instagram.html">How to share a workout on Instagram →</a></p>
       </div>
       <div class="card s2">
-        <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg></div>
-        <h3>Vector route rendering</h3>
+        <div class="card-img"><img src="assets/cards/en-bold.webp" width="720" height="720" loading="lazy" decoding="async" alt="Example Bold card with a vector route, 42.2 km"></div>
+        <span class="tag">Pro</span><h3>Vector route rendering</h3>
         <p>Draw your route as clean line art instead of a map screenshot: faster to render and great for a minimal look.</p>
       </div>
       <div class="card s4">
-        <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
         <h3>On-device, always</h3>
         <p>No account, no linked social network, no backend server. Your workout data never leaves your phone. <a href="privacy.html">Read the privacy policy →</a></p>
       </div>

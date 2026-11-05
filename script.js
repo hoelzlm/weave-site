@@ -19,7 +19,7 @@ if (workoutWord) {
 
   const setWord = (index) => {
     wordIndex = index;
-    wordTrack.style.transform = `translateY(calc(0.26em - ${index * 1.35}em))`;
+    wordTrack.style.transform = `translateY(${-index * 1.2}em)`;
     fitWidth(index);
   };
 
@@ -72,3 +72,16 @@ document.querySelectorAll('[data-set-lang]').forEach((link) => {
     }
   });
 });
+
+// Draw each route line once when it scrolls into view (the hero line draws on load via CSS).
+const drawn = document.querySelectorAll('.band-route');
+if (drawn.length && 'IntersectionObserver' in window) {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) { e.target.classList.add('is-drawn'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.6 });
+  drawn.forEach((el) => io.observe(el));
+} else {
+  drawn.forEach((el) => el.classList.add('is-drawn'));
+}

@@ -136,33 +136,27 @@ h1, h2, h3 { font-weight: 500; }
   display: inline-block;
   position: relative;
   width: 5ch;
-  height: 1.04em;
-  line-height: 1.04;
+  height: 1.2em;
   text-align: left;
-  vertical-align: baseline;
+  vertical-align: bottom;
 }
 
 .word-viewport {
   position: absolute;
-  top: -0.12em;
-  left: 0;
-  width: 100%;
-  height: 1.47em;
-  line-height: 1.04;
+  inset: 0;
   overflow: hidden;
 }
 
 .word-track {
   display: flex;
   flex-direction: column;
-  transform: translateY(0.26em);
   transition: transform 500ms var(--ease);
 }
 
 .word-track span {
   display: block;
-  height: 1.35em;
-  line-height: 1.04;
+  height: 1.2em;
+  line-height: 1.2;
 }
 
 /* The rotating words are drawn from data-word, so the heading's text (what crawlers index and screen
@@ -243,12 +237,83 @@ h1, h2, h3 { font-weight: 500; }
   margin: 16px 0 0;
 }
 
-.hero-shot img {
-  height: 600px;
-  width: auto;
-  border-radius: 24px;
-  border: 1px solid var(--border);
+.hero-sub {
+  font-size: clamp(1.25rem, 2.2vw, 1.625rem);
+  line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  margin: 0 0 20px;
 }
+
+/* Stage: the Health selection becomes a card, joined by one route line that draws itself */
+.stage { position: relative; margin: 0; width: min(560px, 46vw); aspect-ratio: 1 / 1.08; }
+.stage-phone {
+  position: absolute;
+  left: 0; top: 0;
+  width: 40%;
+  height: 66%;
+  overflow: hidden;
+  border-radius: 28px 28px 0 0;
+  border: 1px solid var(--border);
+  border-bottom: 0;
+  -webkit-mask-image: linear-gradient(#000 72%, transparent);
+  mask-image: linear-gradient(#000 72%, transparent);
+}
+.stage-phone img { width: 100%; height: auto; }
+.stage-route { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; overflow: visible; }
+.route-path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 0.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.stage-route .route-path { animation: draw 1500ms var(--ease) 500ms forwards; }
+.route-dot { fill: var(--accent); opacity: 0; animation: pop 200ms ease 1900ms forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes pop { to { opacity: 1; } }
+.stage-card {
+  position: absolute;
+  right: 0; top: 30%;
+  width: 66%;
+  z-index: 2;
+  transform: rotate(4deg);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+}
+.stage-card img { width: 100%; height: auto; }
+.stage figcaption {
+  position: absolute;
+  right: 0; bottom: -6%;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: var(--accent);
+  border: 1px solid rgba(215, 255, 61, 0.35);
+  margin-bottom: 12px;
+}
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px !important; }
+.chips span {
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-raised);
+  color: var(--text);
+}
+.card-img { margin: -8px -8px 16px; height: 200px; overflow: hidden; border-radius: 10px; }
+.card-img img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
 
 /* One entrance on load: a short fade and rise */
 @keyframes rise {
@@ -256,33 +321,29 @@ h1, h2, h3 { font-weight: 500; }
   to { opacity: 1; transform: none; }
 }
 .hero-copy { animation: rise 450ms var(--ease) both; }
-.hero-shot { animation: rise 450ms var(--ease) 80ms both; }
+.stage { animation: rise 450ms var(--ease) 80ms both; }
 
-/* How it works: the app's own screens */
-.shots {
-  display: flex;
-  justify-content: safe center;
-  gap: 24px;
-  overflow-x: auto;
-  padding: 0 24px 32px;
-  scroll-snap-type: x mandatory;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+/* Band: one loud line, a route line drawn under it, then the cards fanned out */
+.band { padding: 96px 24px 72px; overflow: hidden; }
+.band-inner { max-width: var(--max-width); margin: 0 auto; }
+.band-line {
+  font-size: clamp(2.25rem, 7vw, 5.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  margin: 0;
+  max-width: 14ch;
 }
-
-.shots::-webkit-scrollbar { display: none; }
-
-.shots > picture {
-  flex: none;
-  scroll-snap-align: center;
-}
-
-.shots img {
-  height: 480px;
-  width: auto;
-  border-radius: 20px;
-  border: 1px solid var(--border);
-}
+.band-route { display: block; width: min(420px, 70%); height: 24px; margin: 20px 0 16px; overflow: visible; }
+.band-route .route-path { stroke-width: 3.5; }
+.band-route.is-drawn .route-path { animation: draw 1200ms var(--ease) forwards; }
+.band-sub { color: var(--text-dim); font-size: 1.125rem; margin: 0; max-width: 32rem; }
+.fan { display: flex; justify-content: center; margin: 64px auto 0; max-width: var(--max-width); padding: 0 40px; }
+.fan-card { margin: 0; width: min(340px, 32%); flex: none; }
+.fan-card img { width: 100%; height: auto; border-radius: 16px; box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5); }
+.fan-card.f1 { transform: rotate(-7deg) translateY(16px); }
+.fan-card.f2 { transform: translateY(-14px); z-index: 1; margin: 0 -28px; }
+.fan-card.f3 { transform: rotate(7deg) translateY(16px); }
+.fan-note { text-align: center; color: var(--text-muted); font-size: 13px; margin: 40px 0 0; }
 
 /* Sections */
 section { padding: 96px 24px; }
@@ -292,7 +353,7 @@ section { padding: 96px 24px; }
   margin: 0 auto 40px;
 }
 
-/* Signature: a short route line with an endpoint, in front of each section label */
+/* Section labels */
 .eyebrow,
 .doc.guide .eyebrow {
   display: inline-flex;
@@ -303,12 +364,6 @@ section { padding: 96px 24px; }
   letter-spacing: 0.01em;
   color: var(--text-muted);
   margin-bottom: 16px;
-}
-.eyebrow::before {
-  content: "";
-  width: 28px;
-  height: 10px;
-  background: var(--route) no-repeat center / contain;
 }
 
 .section-head h2 {
@@ -396,10 +451,11 @@ section { padding: 96px 24px; }
 .card.wide h3 { font-size: 1.5rem; line-height: 1.2; letter-spacing: -0.01em; }
 .card.wide p { font-size: 1rem; }
 .card.wide .card-copy { flex: 1 1 280px; }
-.card.wide > picture { flex: 0 0 auto; }
+.card.wide > picture { flex: 0 1 auto; max-width: 100%; }
 .card.wide img {
-  height: 420px;
-  width: auto;
+  width: 360px;
+  max-width: 100%;
+  height: auto;
   border-radius: 16px;
   border: 1px solid var(--border);
 }
@@ -598,7 +654,9 @@ footer {
 @media (prefers-reduced-motion: reduce) {
   .word-track,
   .workout-word[data-fit] { transition: none; }
-  .hero-copy, .hero-shot { animation: none; }
+  .hero-copy, .stage { animation: none; }
+  .route-path { animation: none !important; stroke-dashoffset: 0; }
+  .route-dot { animation: none; opacity: 1; }
   html { scroll-behavior: auto; }
 }
 
@@ -609,7 +667,7 @@ footer {
     gap: 48px;
     padding: 48px 24px 64px;
   }
-  .hero-shot img { height: 520px; margin: 0 auto; }
+  .stage { width: min(520px, 100%); margin: 0 auto; }
   .card, .card.s4, .card.s2 { grid-column: 1 / -1; }
   .faq-list { grid-template-columns: 1fr; }
   section { padding: 72px 24px; }
@@ -632,17 +690,18 @@ footer {
     height: 44px;
   }
   .cta-note { margin-top: 8px; text-align: center; }
-  .hero-shot img { height: 440px; }
-  .shots { padding: 0 20px 24px; gap: 16px; scroll-padding-inline: 20px; justify-content: flex-start; }
-  .shots > picture { scroll-snap-align: start; }
-  .shots img { height: 380px; }
+  .band { padding: 56px 20px 48px; }
+  .fan { padding: 0 12px; margin-top: 40px; }
+  .fan-card { width: 38%; }
+  .fan-card.f2 { margin: 0 -16px; }
+  .card-img { height: 180px; }
   .guide-shot img { height: 380px; }
   .section-head { margin-bottom: 32px; }
   .section-head h2 { max-width: none; }
   .card { padding: 20px; }
   .card.wide { padding: 20px; gap: 24px; }
-  .card.wide > picture { margin: 0 auto; }
-  .card.wide img { height: 380px; }
+  .card.wide > picture { margin: 0 auto; width: 100%; }
+  .card.wide img { height: auto; width: 100%; }
   .card .icon { margin-bottom: 16px; }
   .pro-inner { gap: 32px; }
   .pro-inner h2 { font-size: 1.75rem; }
