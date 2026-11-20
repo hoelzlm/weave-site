@@ -6,4 +6,4 @@ Issues tracked in GitHub Issues on `hoelzlm/weave-site` (specs as parent issues,
 
 ### Domain docs
 
-Single-context layout — `CONTEXT.md` + `docs/adr/` at repo root. See `docs/agents/domain.md`.
+Single-context: `CONTEXT.md` + `docs/adr/` at repo root. See `~/Developer/weave/weave-agent-home/docs/agents/domain.md`.
